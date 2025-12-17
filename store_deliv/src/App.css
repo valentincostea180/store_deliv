@@ -43,11 +43,6 @@ body {
 /* NAVBAR & TOP  */
 /* ============================= */
 
-.navbar {
-  max-height: 4rem;
-  background: transparent;
-}
-
 .top {
   display: flex;
   justify-content: space-between;
@@ -122,26 +117,7 @@ body {
   box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
 }
 
-.meeting-info {
-  background: rgba(255, 255, 255, 0.05);
-  border-radius: 1rem;
-  padding: 1.5rem;
 
-  border: 1px solid var(--card-border);
-}
-
-.meeting-info h2 {
-  text-align: center;
-  color: #fff;
-  margin-bottom: 1rem;
-  background: linear-gradient(to right, #fff, var(--warm-white));
-  -webkit-text-fill-color: transparent;
-}
-
-.meeting-info p {
-  color: var(--warm-white);
-  margin-bottom: 0.5rem;
-}
 
 /* ============================= */
 /* FORMS */
