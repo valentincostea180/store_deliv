@@ -23,7 +23,7 @@ body {
   background-attachment: fixed;
   animation: gradientShift 15s ease infinite;
   margin: 0;
-  color: white;
+  color: black;
   font-family: "Segoe UI", sans-serif;
 }
 
@@ -49,6 +49,10 @@ body {
   align-items: center;
 }
 
+.col-md {
+  text-align: center;
+}
+
 /* ============================= */
 /* VISITORS' AGENDA */
 /* ============================= */
@@ -69,14 +73,6 @@ body {
   box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
 }
 
-.agenda-header h1 {
-  font-weight: 700;
-  margin-bottom: 0.5rem;
-  font-size: 2.5rem;
-  background: linear-gradient(to right, #fff, var(--warm-white));
-  -webkit-text-fill-color: transparent;
-}
-
 .agenda-header p {
   color: var(--warm-white);
   font-size: 1.1rem;
@@ -84,10 +80,19 @@ body {
   margin: 0 auto;
 }
 
+.agenda-content h2 {
+  text-align: center;
+}
+
 .agenda-content {
   display: flex;
   gap: 2rem;
   flex-wrap: wrap;
+  justify-content: space-between;
+}
+
+.agenda-content row {
+  text-align: center;
 }
 
 .agenda-panel {
@@ -117,8 +122,6 @@ body {
   box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
 }
 
-
-
 /* ============================= */
 /* FORMS */
 /* ============================= */
@@ -128,7 +131,7 @@ body {
 }
 
 .form-floating > label {
-  color: #ddd;
+  color: black;
   font-weight: 500;
   left: 10px;
 }
@@ -136,10 +139,10 @@ body {
 .form-control,
 .form-select,
 textarea {
-  background: rgba(255, 255, 255, 0.12) !important;
+  background: black !important;
   border: 2px solid #a791b3;
   border-radius: 1rem;
-  color: white !important;
+  color: black !important;
   padding: 0.75rem 2rem;
   transition: all 0.3s ease;
 }
@@ -147,9 +150,9 @@ textarea {
 .form-control:focus,
 .form-select:focus,
 textarea:focus {
-  background: rgba(255, 255, 255, 0.18) !important;
+  background: black !important;
   border-color: var(--warm-white);
-  box-shadow: 0 0 0 0.25rem rgba(167, 145, 179, 0.25);
+  box-shadow: 0 0 0 0.25rem black;
 }
 
 .form-control::placeholder {
@@ -285,7 +288,7 @@ textarea:focus {
 }
 
 .btn-tsx {
-  color: #ddd;
+  color: black;
   border-radius: 1.5rem;
   background: var(--card-bg);
   border: 1px solid var(--card-border);
@@ -676,8 +679,6 @@ iframe {
   color: #c0b0cc !important;
 }
 
-
-
 /* Responsive Design */
 @media (max-width: 768px) {
   .url-modal {
@@ -698,34 +699,4 @@ iframe {
   .modal-btn {
     width: 100%;
   }
-}
-
-/* ============================= */
-/* PARTICIPANTS STYLES  */
-/* ============================= */
-
-.participants-form {
-  width: 100%;
-}
-
-.participant-item {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  background: rgba(255, 255, 255, 0.08);
-  border-radius: 0.75rem;
-  padding: 0.75rem 1rem;
-  margin-bottom: 0.5rem;
-  border: 1px solid var(--card-border);
-}
-
-.participant-item span {
-  color: #fff;
-}
-
-.participants-list h5 {
-  color: #fff;
-  margin-bottom: 1rem;
-  border-bottom: 1px solid var(--card-border);
-  padding-bottom: 0.5rem;
 }
