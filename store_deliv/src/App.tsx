@@ -1,5 +1,6 @@
 import { useState } from "react";
 import "./App.css";
+import Dropzone from "./components/Dropzone";
 
 function App() {
   const [showNewProduct, setShowNewProduct] = useState(false);
@@ -27,7 +28,7 @@ function App() {
       <div className="agenda-content">
         <div className="meetings-panel">
           {showOldProduct && !showNewProduct && (
-            <div>
+            <div className="initial-text">
               <h2> There are no deliverable saved.</h2>
               <button
                 className="btn-tsx"
@@ -46,15 +47,7 @@ function App() {
               <div className="row g-2">
                 <div className="col-md">
                   <div className="form-floating">
-                    <input
-                      type="text"
-                      placeholder="Photo"
-                      value={newProduct.name}
-                      onChange={(e) =>
-                        setNewProduct({ ...newProduct, photo: e.target.value })
-                      }
-                      className="form-control"
-                    />
+                    <Dropzone heading="Photo" uploadType="photo" />
                   </div>
                 </div>
 
@@ -95,8 +88,8 @@ function App() {
 
         <div className="meetings-panel">
           {showOldLocation && !showNewLocation && (
-            <div>
-              <h2> There are no deliverable saved.</h2>
+            <div className="initial-text">
+              <h2> There are no locations saved.</h2>
               <button
                 className="btn-tsx"
                 onClick={() => {
