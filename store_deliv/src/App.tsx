@@ -42,7 +42,7 @@ function App() {
           )}
 
           {showNewProduct && (
-            <div>
+            <div className="initial-text">
               <h2>Add New Deliverable</h2>
               <div className="row g-2">
                 <div className="col-md">
@@ -82,6 +82,12 @@ function App() {
                   </div>
                 </div>
               </div>
+              <button
+                className="modal-btn-cancel"
+                onClick={() => setShowNewProduct(false)}
+              >
+                Cancel
+              </button>
             </div>
           )}
         </div>
@@ -102,7 +108,7 @@ function App() {
           )}
 
           {showNewLocation && (
-            <div>
+            <div className="initial-text">
               <h2>Add New Location</h2>
               <div className="row g-2">
                 <div className="col-md">
@@ -136,6 +142,12 @@ function App() {
                   </div>
                 </div>
               </div>
+              <button
+                className="modal-btn-cancel"
+                onClick={() => setShowNewLocation(false)}
+              >
+                Cancel
+              </button>
             </div>
           )}
         </div>

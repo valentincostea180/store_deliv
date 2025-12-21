@@ -334,7 +334,9 @@ textarea:focus {
 .modal-btn-cancel {
   background: var(--background);
   color: var(--light-accent);
+  justify-content: center;
   border: 1px solid var(--card-border);
+  margin: auto;
 }
 
 .modal-btn-cancel:hover {
