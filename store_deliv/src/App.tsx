@@ -82,14 +82,27 @@ function App() {
                   </div>
                 </div>
               </div>
-              <button
-                className="modal-btn-cancel"
-                onClick={() => setShowNewProduct(false)}
-              >
-                Cancel
-              </button>
             </div>
           )}
+
+          {/* lista produselor */}
+          {!showNewProduct && (
+            <div style={{ marginTop: "2rem" }} className="visitors-list">
+              {renderItemTable()}
+            </div>
+          )}
+
+          <button
+            className="modal-btn-cancel"
+            onClick={() => {
+              if (showNewProduct) {
+                setNewProduct({ name: "", photo: "", quantity: "" });
+              }
+              setShowNewProduct((prev) => !prev);
+            }}
+          >
+            {showNewProduct ? "Save" : "Cancel"}
+          </button>
         </div>
 
         <div className="meetings-panel">
@@ -142,14 +155,27 @@ function App() {
                   </div>
                 </div>
               </div>
-              <button
-                className="modal-btn-cancel"
-                onClick={() => setShowNewLocation(false)}
-              >
-                Cancel
-              </button>
             </div>
           )}
+
+          {/* lista produselor */}
+          {!showNewLocation && (
+            <div style={{ marginTop: "2rem" }} className="visitors-list">
+              {renderLocationTable()}
+            </div>
+          )}
+
+          <button
+            className="modal-btn-cancel"
+            onClick={() => {
+              if (showNewLocation) {
+                setNewLocation({ name: "", address: "" });
+              }
+              setShowNewLocation((prev) => !prev);
+            }}
+          >
+            {showNewLocation ? "Save" : "Cancel"}
+          </button>
         </div>
       </div>
     </>
