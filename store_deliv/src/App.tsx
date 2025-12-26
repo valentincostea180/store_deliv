@@ -19,6 +19,49 @@ function App() {
     address: "",
   });
 
+  const renderItemTable = () => {
+    const today = new Date();
+    const twoDaysLater = new Date(today);
+    twoDaysLater.setDate(today.getDate() + 2);
+
+    return (
+      <table
+        className="table tb table-striped table-bordered"
+        style={{ width: "100%" }}
+      >
+        <thead>
+          <tr>
+            <th>Photo</th>
+            <th>Name</th>
+            <th>Quantity</th>
+          </tr>
+        </thead>
+        <tbody>
+          {products.length > 0 ? (
+            products.slice(-4).map((newProduct) => (
+              <tr
+                key={newProduct.id}
+                style={{ cursor: "pointer" }}
+                onClick={() => handleEliminate(newProduct.id)}
+                title="Click to remove this visiproducttor"
+              >
+                <td>{newProduct.photo}</td>
+                <td>{newProduct.name}</td>
+                <td>{newProduct.quantity}</td>
+              </tr>
+            ))
+          ) : (
+            <tr>
+              <td colSpan={3} style={{ textAlign: "center" }}>
+                No products saved.
+              </td>
+            </tr>
+          )}
+        </tbody>
+      </table>
+    );
+  };
+
   return (
     <>
       <div className="agenda-header">
