@@ -2,6 +2,14 @@ import { useState } from "react";
 import "./App.css";
 import Dropzone from "./components/Dropzone";
 
+// interfate
+interface Product {
+  id: string;
+  name: string;
+  photo: string;
+  quantity: string;
+}
+
 function App() {
   const [showNewProduct, setShowNewProduct] = useState(false);
   const [showOldProduct, setShowOldProduct] = useState(true);
@@ -19,11 +27,13 @@ function App() {
     address: "",
   });
 
-  const renderItemTable = () => {
-    const today = new Date();
-    const twoDaysLater = new Date(today);
-    twoDaysLater.setDate(today.getDate() + 2);
+  const [products, setProducts] = useState<Product[]>([]);
 
+  const handleRemoveProduct = (id: string) => {
+    setProducts(products.filter((product) => product.id !== id));
+  };
+
+  const renderItemTable = () => {
     return (
       <table
         className="table tb table-striped table-bordered"
@@ -42,7 +52,7 @@ function App() {
               <tr
                 key={newProduct.id}
                 style={{ cursor: "pointer" }}
-                onClick={() => handleEliminate(newProduct.id)}
+                onClick={() => handleRemoveProduct(newProduct.id)}
                 title="Click to remove this visiproducttor"
               >
                 <td>{newProduct.photo}</td>
