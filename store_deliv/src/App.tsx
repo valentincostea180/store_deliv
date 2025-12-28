@@ -10,6 +10,12 @@ interface Product {
   quantity: string;
 }
 
+interface Location {
+  id: string;
+  name: string;
+  address: string;
+}
+
 function App() {
   const [showNewProduct, setShowNewProduct] = useState(false);
   const [showOldProduct, setShowOldProduct] = useState(true);
@@ -28,9 +34,14 @@ function App() {
   });
 
   const [products, setProducts] = useState<Product[]>([]);
+  const [locations, setLocations] = useState<Location[]>([]);
 
   const handleRemoveProduct = (id: string) => {
     setProducts(products.filter((product) => product.id !== id));
+  };
+
+  const handleRemoveLocation = (id: string) => {
+    setLocations(locations.filter((location) => location.id !== id));
   };
 
   const renderItemTable = () => {
@@ -48,12 +59,12 @@ function App() {
         </thead>
         <tbody>
           {products.length > 0 ? (
-            products.slice(-4).map((newProduct) => (
+            products.map((newProduct) => (
               <tr
                 key={newProduct.id}
                 style={{ cursor: "pointer" }}
                 onClick={() => handleRemoveProduct(newProduct.id)}
-                title="Click to remove this visiproducttor"
+                title="Click to remove this product"
               >
                 <td>{newProduct.photo}</td>
                 <td>{newProduct.name}</td>
@@ -64,6 +75,43 @@ function App() {
             <tr>
               <td colSpan={3} style={{ textAlign: "center" }}>
                 No products saved.
+              </td>
+            </tr>
+          )}
+        </tbody>
+      </table>
+    );
+  };
+
+  const renderLocationTable = () => {
+    return (
+      <table
+        className="table tb table-striped table-bordered"
+        style={{ width: "100%" }}
+      >
+        <thead>
+          <tr>
+            <th>Name</th>
+            <th>Address</th>
+          </tr>
+        </thead>
+        <tbody>
+          {locations.length > 0 ? (
+            locations.map((newLocation) => (
+              <tr
+                key={newLocation.id}
+                style={{ cursor: "pointer" }}
+                onClick={() => handleRemoveLocation(newLocation.id)}
+                title="Click to remove this product"
+              >
+                <td>{newLocation.name}</td>
+                <td>{newLocation.address}</td>
+              </tr>
+            ))
+          ) : (
+            <tr>
+              <td colSpan={2} style={{ textAlign: "center" }}>
+                No locations saved.
               </td>
             </tr>
           )}
@@ -211,7 +259,7 @@ function App() {
             </div>
           )}
 
-          {/* lista produselor */}
+          {/* lista locatiilor */}
           {!showNewLocation && (
             <div style={{ marginTop: "2rem" }} className="visitors-list">
               {renderLocationTable()}
