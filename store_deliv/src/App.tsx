@@ -2,7 +2,6 @@ import { useState } from "react";
 import "./App.css";
 import Dropzone from "./components/Dropzone";
 
-// interfate
 interface Product {
   id: string;
   name: string;
@@ -18,9 +17,7 @@ interface Location {
 
 function App() {
   const [showNewProduct, setShowNewProduct] = useState(false);
-  const [showOldProduct, setShowOldProduct] = useState(true);
   const [showNewLocation, setShowNewLocation] = useState(false);
-  const [showOldLocation, setShowOldLocation] = useState(true);
 
   const [newProduct, setNewProduct] = useState({
     photo: "",
@@ -48,7 +45,6 @@ function App() {
       setProducts([...products, product]);
       setNewProduct({ photo: "", name: "", quantity: "" });
       setShowNewProduct(false);
-      setShowOldProduct(true);
     }
   };
 
@@ -61,9 +57,8 @@ function App() {
       };
 
       setLocations([...locations, location]);
-      setNewProduct({ name: "", address: "" });
+      setNewLocation({ name: "", address: "" });
       setShowNewLocation(false);
-      setShowOldLocation(true);
     }
   };
 
@@ -75,12 +70,9 @@ function App() {
     setLocations(locations.filter((location) => location.id !== id));
   };
 
-  const renderItemTable = () => {
+  const renderProductTable = () => {
     return (
-      <table
-        className="table tb table-striped table-bordered"
-        style={{ width: "100%" }}
-      >
+      <table className="data-table">
         <thead>
           <tr>
             <th>Photo</th>
@@ -90,21 +82,21 @@ function App() {
         </thead>
         <tbody>
           {products.length > 0 ? (
-            products.map((newProduct) => (
+            products.map((product) => (
               <tr
-                key={newProduct.id}
-                style={{ cursor: "pointer" }}
-                onClick={() => handleRemoveProduct(newProduct.id)}
+                key={product.id}
+                className="clickable-row"
+                onClick={() => handleRemoveProduct(product.id)}
                 title="Click to remove this product"
               >
-                <td>{newProduct.photo}</td>
-                <td>{newProduct.name}</td>
-                <td>{newProduct.quantity}</td>
+                <td>{product.photo || "-"}</td>
+                <td>{product.name}</td>
+                <td>{product.quantity}</td>
               </tr>
             ))
           ) : (
             <tr>
-              <td colSpan={3} style={{ textAlign: "center" }}>
+              <td colSpan={3} className="no-data">
                 No products saved.
               </td>
             </tr>
@@ -116,10 +108,7 @@ function App() {
 
   const renderLocationTable = () => {
     return (
-      <table
-        className="table tb table-striped table-bordered"
-        style={{ width: "100%" }}
-      >
+      <table className="data-table">
         <thead>
           <tr>
             <th>Name</th>
@@ -128,20 +117,20 @@ function App() {
         </thead>
         <tbody>
           {locations.length > 0 ? (
-            locations.map((newLocation) => (
+            locations.map((location) => (
               <tr
-                key={newLocation.id}
-                style={{ cursor: "pointer" }}
-                onClick={() => handleRemoveLocation(newLocation.id)}
-                title="Click to remove this product"
+                key={location.id}
+                className="clickable-row"
+                onClick={() => handleRemoveLocation(location.id)}
+                title="Click to remove this location"
               >
-                <td>{newLocation.name}</td>
-                <td>{newLocation.address}</td>
+                <td>{location.name}</td>
+                <td>{location.address}</td>
               </tr>
             ))
           ) : (
             <tr>
-              <td colSpan={2} style={{ textAlign: "center" }}>
+              <td colSpan={2} className="no-data">
                 No locations saved.
               </td>
             </tr>
@@ -152,39 +141,40 @@ function App() {
   };
 
   return (
-    <>
-      <div className="agenda-header">
+    <div className="app-container">
+      <div className="app-header">
         <h1>Company Deliverables System</h1>
       </div>
 
-      <div className="agenda-content">
-        <div className="meetings-panel">
-          {showOldProduct && !showNewProduct && (
-            <div className="initial-text">
-              <h2> There are no deliverable saved.</h2>
+      <div className="app-content">
+        {/* Products Panel */}
+        <div className="content-panel">
+          {!showNewProduct && products.length === 0 ? (
+            <div className="empty-state">
+              <h2>There are no deliverables saved.</h2>
               <button
-                className="btn-tsx"
-                onClick={() => {
-                  setShowNewProduct(true);
-                }}
+                className="add-btn"
+                onClick={() => setShowNewProduct(true)}
               >
-                ADD
+                Add Product
               </button>
             </div>
-          )}
-
-          {showNewProduct && (
-            <div className="initial-text">
+          ) : showNewProduct ? (
+            <div className="form-container">
               <h2>Add New Deliverable</h2>
-              <div className="row g-2">
-                <div className="col-md">
-                  <div className="form-floating">
-                    <Dropzone heading="Photo" uploadType="photo" />
-                  </div>
+              <div className="form-row">
+                <div className="form-group">
+                  <Dropzone
+                    heading="Photo"
+                    uploadType="photo"
+                    onUpload={(url: string) =>
+                      setNewProduct({ ...newProduct, photo: url })
+                    }
+                  />
                 </div>
 
-                <div className="col-md">
-                  <div className="form-floating">
+                <div className="form-group">
+                  <div className="input-wrapper">
                     <input
                       type="text"
                       placeholder="Product name"
@@ -192,13 +182,13 @@ function App() {
                       onChange={(e) =>
                         setNewProduct({ ...newProduct, name: e.target.value })
                       }
-                      className="form-control"
+                      className="form-input"
                     />
                   </div>
                 </div>
 
-                <div className="col-md">
-                  <div className="form-floating">
+                <div className="form-group">
+                  <div className="input-wrapper">
                     <input
                       type="text"
                       placeholder="Quantity"
@@ -209,72 +199,82 @@ function App() {
                           quantity: e.target.value,
                         })
                       }
-                      className="form-control"
+                      className="form-input"
                     />
                   </div>
                 </div>
               </div>
             </div>
+          ) : (
+            <div className="table-container">{renderProductTable()}</div>
           )}
 
-          {/* lista produselor */}
-          {!showNewProduct && (
-            <div style={{ marginTop: "2rem" }} className="visitors-list">
-              {renderItemTable()}
-            </div>
-          )}
+          <div className="action-buttons">
+            <button
+              className="secondary-btn"
+              onClick={() => {
+                if (showNewProduct) {
+                  setNewProduct({ name: "", photo: "", quantity: "" });
+                  setShowNewProduct(false);
+                } else {
+                  setShowNewProduct(true);
+                }
+              }}
+            >
+              {showNewProduct
+                ? "Cancel"
+                : products.length === 0
+                ? "Add Product"
+                : "Add Another Product"}
+            </button>
 
-          <button
-            className="modal-btn-cancel"
-            onClick={() => {
-              if (showNewProduct) {
-                setNewProduct({ name: "", photo: "", quantity: "" });
-              }
-              setShowNewProduct((prev) => !prev);
-            }}
-          >
-            {showNewProduct ? "Cancel" : "Add Product"}
-          </button>
+            {showNewProduct && (
+              <button
+                className="primary-btn"
+                onClick={handleAddProduct}
+                disabled={!newProduct.name || !newProduct.quantity}
+              >
+                Save Product
+              </button>
+            )}
+          </div>
         </div>
 
-        <div className="meetings-panel">
-          {showOldLocation && !showNewLocation && (
-            <div className="initial-text">
-              <h2> There are no locations saved.</h2>
+        {/* Locations Panel */}
+        <div className="content-panel">
+          {!showNewLocation && locations.length === 0 ? (
+            <div className="empty-state">
+              <h2>There are no locations saved.</h2>
               <button
-                className="btn-tsx"
-                onClick={() => {
-                  setShowNewLocation(true);
-                }}
+                className="add-btn"
+                onClick={() => setShowNewLocation(true)}
               >
-                ADD
+                Add Location
               </button>
             </div>
-          )}
-
-          {showNewLocation && (
-            <div className="initial-text">
+          ) : showNewLocation ? (
+            <div className="form-container">
               <h2>Add New Location</h2>
-              <div className="row g-2">
-                <div className="col-md">
-                  <div className="form-floating">
+              <div className="form-row">
+                <div className="form-group">
+                  <div className="input-wrapper">
                     <input
                       type="text"
                       placeholder="Address"
-                      value={newLocation.name}
+                      value={newLocation.address}
                       onChange={(e) =>
                         setNewLocation({
                           ...newLocation,
                           address: e.target.value,
                         })
                       }
-                      className="form-control"
+                      className="form-input"
                     />
                   </div>
                 </div>
 
-                <div className="col-md">
-                  <div className="form-floating">
+                <div className="form-group">
+                  <div className="input-wrapper">
                     <input
                       type="text"
                       placeholder="Location name"
@@ -282,35 +282,48 @@ function App() {
                       onChange={(e) =>
                         setNewLocation({ ...newLocation, name: e.target.value })
                       }
-                      className="form-control"
+                      className="form-input"
                     />
                   </div>
                 </div>
               </div>
             </div>
+          ) : (
+            <div className="table-container">{renderLocationTable()}</div>
           )}
 
-          {/* lista locatiilor */}
-          {!showNewLocation && (
-            <div style={{ marginTop: "2rem" }} className="visitors-list">
-              {renderLocationTable()}
-            </div>
-          )}
+          <div className="action-buttons">
+            <button
+              className="secondary-btn"
+              onClick={() => {
+                if (showNewLocation) {
+                  setNewLocation({ name: "", address: "" });
+                  setShowNewLocation(false);
+                } else {
+                  setShowNewLocation(true);
+                }
+              }}
+            >
+              {showNewLocation
+                ? "Cancel"
+                : locations.length === 0
+                ? "Add Location"
+                : "Add Another Location"}
+            </button>
 
-          <button
-            className="modal-btn-cancel"
-            onClick={() => {
-              if (showNewLocation) {
-                setNewLocation({ name: "", address: "" });
-              }
-              setShowNewLocation((prev) => !prev);
-            }}
-          >
-            {showNewLocation ? "Cancel" : "Add Location"}
-          </button>
+            {showNewLocation && (
+              <button
+                className="primary-btn"
+                onClick={handleAddLocation}
+                disabled={!newLocation.name || !newLocation.address}
+              >
+                Save Location
+              </button>
+            )}
+          </div>
         </div>
       </div>
-    </>
+    </div>
   );
 }
 
