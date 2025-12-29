@@ -36,6 +36,37 @@ function App() {
   const [products, setProducts] = useState<Product[]>([]);
   const [locations, setLocations] = useState<Location[]>([]);
 
+  const handleAddProduct = () => {
+    if (newProduct.name && newProduct.quantity) {
+      const product: Product = {
+        id: Date.now().toString(),
+        name: newProduct.name,
+        photo: newProduct.photo,
+        quantity: newProduct.quantity,
+      };
+
+      setProducts([...products, product]);
+      setNewProduct({ photo: "", name: "", quantity: "" });
+      setShowNewProduct(false);
+      setShowOldProduct(true);
+    }
+  };
+
+  const handleAddLocation = () => {
+    if (newLocation.name && newLocation.address) {
+      const location: Location = {
+        id: Date.now().toString(),
+        name: newLocation.name,
+        address: newLocation.address,
+      };
+
+      setLocations([...locations, location]);
+      setNewProduct({ name: "", address: "" });
+      setShowNewLocation(false);
+      setShowOldLocation(true);
+    }
+  };
+
   const handleRemoveProduct = (id: string) => {
     setProducts(products.filter((product) => product.id !== id));
   };
@@ -202,7 +233,7 @@ function App() {
               setShowNewProduct((prev) => !prev);
             }}
           >
-            {showNewProduct ? "Save" : "Cancel"}
+            {showNewProduct ? "Cancel" : "Add Product"}
           </button>
         </div>
 
@@ -275,7 +306,7 @@ function App() {
               setShowNewLocation((prev) => !prev);
             }}
           >
-            {showNewLocation ? "Save" : "Cancel"}
+            {showNewLocation ? "Cancel" : "Add Location"}
           </button>
         </div>
       </div>
