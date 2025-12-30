@@ -153,10 +153,21 @@ function App() {
             <div className="empty-state">
               <h2>There are no deliverables saved.</h2>
               <button
-                className="add-btn"
-                onClick={() => setShowNewProduct(true)}
+                className="secondary-btn"
+                onClick={() => {
+                  if (showNewProduct) {
+                    setNewProduct({ name: "", photo: "", quantity: "" });
+                    setShowNewProduct(false);
+                  } else {
+                    setShowNewProduct(true);
+                  }
+                }}
               >
-                Add Product
+                {showNewProduct
+                  ? "Cancel"
+                  : products.length === 0
+                  ? "Add Product"
+                  : "Add Another Product"}
               </button>
             </div>
           ) : showNewProduct ? (
@@ -210,24 +221,6 @@ function App() {
           )}
 
           <div className="action-buttons">
-            <button
-              className="secondary-btn"
-              onClick={() => {
-                if (showNewProduct) {
-                  setNewProduct({ name: "", photo: "", quantity: "" });
-                  setShowNewProduct(false);
-                } else {
-                  setShowNewProduct(true);
-                }
-              }}
-            >
-              {showNewProduct
-                ? "Cancel"
-                : products.length === 0
-                ? "Add Product"
-                : "Add Another Product"}
-            </button>
-
             {showNewProduct && (
               <button
                 className="primary-btn"
