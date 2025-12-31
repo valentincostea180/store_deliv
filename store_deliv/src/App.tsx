@@ -222,13 +222,24 @@ function App() {
 
           <div className="action-buttons">
             {showNewProduct && (
-              <button
-                className="primary-btn"
-                onClick={handleAddProduct}
-                disabled={!newProduct.name || !newProduct.quantity}
-              >
-                Save Product
-              </button>
+              <>
+                <button
+                  className="primary-btn"
+                  onClick={handleAddProduct}
+                  disabled={!newProduct.name || !newProduct.quantity}
+                >
+                  Save Product
+                </button>
+                <button
+                  className="primary-btn"
+                  onClick={() => {
+                    setNewProduct({ photo: "", name: "", quantity: "" });
+                    setShowNewProduct(false);
+                  }}
+                >
+                  Cancel
+                </button>
+              </>
             )}
           </div>
         </div>
