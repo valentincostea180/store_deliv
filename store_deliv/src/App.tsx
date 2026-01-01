@@ -250,10 +250,21 @@ function App() {
             <div className="empty-state">
               <h2>There are no locations saved.</h2>
               <button
-                className="add-btn"
-                onClick={() => setShowNewLocation(true)}
+                className="secondary-btn"
+                onClick={() => {
+                  if (showNewLocation) {
+                    setNewLocation({ name: "", address: "" });
+                    setShowNewLocation(false);
+                  } else {
+                    setShowNewLocation(true);
+                  }
+                }}
               >
-                Add Location
+                {showNewLocation
+                  ? "Cancel"
+                  : locations.length === 0
+                  ? "Add Location"
+                  : "Add Another Location"}
               </button>
             </div>
           ) : showNewLocation ? (
@@ -297,32 +308,25 @@ function App() {
           )}
 
           <div className="action-buttons">
-            <button
-              className="secondary-btn"
-              onClick={() => {
-                if (showNewLocation) {
-                  setNewLocation({ name: "", address: "" });
-                  setShowNewLocation(false);
-                } else {
-                  setShowNewLocation(true);
-                }
-              }}
-            >
-              {showNewLocation
-                ? "Cancel"
-                : locations.length === 0
-                ? "Add Location"
-                : "Add Another Location"}
-            </button>
-
             {showNewLocation && (
-              <button
-                className="primary-btn"
-                onClick={handleAddLocation}
-                disabled={!newLocation.name || !newLocation.address}
-              >
-                Save Location
-              </button>
+              <>
+                <button
+                  className="primary-btn"
+                  onClick={handleAddLocation}
+                  disabled={!newLocation.name || !newLocation.address}
+                >
+                  Save Location
+                </button>
+                <button
+                  className="primary-btn"
+                  onClick={() => {
+                    setNewLocation({ address: "", name: "" });
+                    setShowNewLocation(false);
+                  }}
+                >
+                  Cancel
+                </button>
+              </>
             )}
           </div>
         </div>
