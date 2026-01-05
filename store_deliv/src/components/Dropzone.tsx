@@ -107,10 +107,10 @@ export default function Dropzone({
           <p>Drop the JPG file here...</p>
         ) : (
           <div className="dropzone-box">
-            <p className="dropzone-heading">{heading}</p>
-            <p className="dropzone-instruction">
-              Drag & drop an JPG file here, or click to select
+            <p className="dropzone-heading" style={{ textAlign: "center" }}>
+              {heading}
             </p>
+            <p className="dropzone-instruction">Click to select an JPG file.</p>
           </div>
         )}
       </div>

@@ -175,16 +175,6 @@ function App() {
               <h2>Add New Deliverable</h2>
               <div className="form-row">
                 <div className="form-group">
-                  <Dropzone
-                    heading="Photo"
-                    uploadType="photo"
-                    onUpload={(url: string) =>
-                      setNewProduct({ ...newProduct, photo: url })
-                    }
-                  />
-                </div>
-
-                <div className="form-group">
                   <div className="input-wrapper">
                     <input
                       type="text"
@@ -213,6 +203,16 @@ function App() {
                       className="form-input"
                     />
                   </div>
+                </div>
+
+                <div className="form-group">
+                  <Dropzone
+                    heading="Photo"
+                    uploadType="photo"
+                    onUpload={(url: string) =>
+                      setNewProduct({ ...newProduct, photo: url })
+                    }
+                  />
                 </div>
               </div>
             </div>

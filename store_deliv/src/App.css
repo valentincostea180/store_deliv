@@ -33,9 +33,7 @@ body {
   text-align: center;
   margin-bottom: 40px;
   padding: 20px;
-  background-color: var(--card-background);
   border-radius: 12px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
 }
 
 .app-header h1 {
@@ -57,7 +55,7 @@ body {
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
   display: flex;
   flex-direction: column;
-  min-height: 400px;
+  min-height: 300px;
 }
 
 .empty-state {
@@ -85,9 +83,12 @@ body {
 }
 
 .form-row {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-  gap: 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-evenly;
+  gap: 1.5rem;
+  margin-bottom: 2rem;
 }
 
 .form-group {
@@ -155,9 +156,9 @@ body {
 
 .action-buttons {
   display: flex;
-  gap: 12px;
-  margin-top: auto;
-  padding-top: 20px;
+  justify-content: space-between;
+  gap: 0.5rem;
+  padding-top: 1rem;
 }
 
 .primary-btn, .secondary-btn, .add-btn {
@@ -207,27 +208,11 @@ body {
   transform: translateY(-1px);
 }
 
-/* Responsive Design */
-@media (max-width: 768px) {
-  .app-content {
-    grid-template-columns: 1fr;
-  }
-  
-  .content-panel {
-    min-width: 100%;
-  }
-  
-  .form-row {
-    grid-template-columns: 1fr;
-  }
-  
-  .action-buttons {
-    flex-direction: column;
-  }
-  
-  .primary-btn, .secondary-btn {
-    width: 100%;
-  }
+.dropzone-box {
+  padding: 0 1.6rem 0.5rem 1.6rem;
+  border: var(--primary-color);
+  border-radius: 1rem;
+  border-style: dotted;
 }
 
 @media (max-width: 480px) {
