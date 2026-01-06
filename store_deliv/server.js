@@ -44,3 +44,21 @@ const writeJSON = (filePath, data) => {
     throw err;
   }
 };
+
+app.get("/api/products", (req, res) => {
+  try {
+    const products = readJSON(productsPath);
+    res.json(products);
+  } catch (err) {
+    res.status(500).json({ error: "Failed to read the products." });
+  }
+});
+
+app.get("/api/locations", (reg,res) => {
+try {
+  const locations = readJSON(locationsPath);
+  res.json(locaitons);
+} catch(err) {
+  res.status(500).json({error: "Failed to read the locations."  })
+}
+})
