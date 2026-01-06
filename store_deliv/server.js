@@ -18,3 +18,29 @@ const dataDir = path.join(__dirname, "public", "data");
 if (!fs.existsSync(dataDir)) {
   fs.mkdirSync(dataDir, { recursive: true });
 }
+
+const productsPath = path.join(dataDir, "products.json");
+const locationsPath = path.join(dataDir, "location.json");
+
+if (!fs.existsSync(locationsPath))
+  fs.writeFileSync(locationsPath, JSON.stringify([], null, 2));
+if (!fs.existsSync(productsPath))
+  fs.writeFileSync(productsPath, JSON.stringify({}, null, 2)); 
+
+const readJSON = (filePath) => {
+  try {
+    return JSON.parse(fs.readFileSync(filePath, "utf8"));
+  } catch (err) {
+    console.error(`Error reading ${filePath}:`, err);
+    return [];
+  }
+};
+
+const writeJSON = (filePath, data) => {
+  try {
+    fs.writeFileSync(filePath, JSON.stringify(data, null, 2));
+  } catch (err) {
+    console.error(`Error writing to ${filePath}:`, err);
+    throw err;
+  }
+};
