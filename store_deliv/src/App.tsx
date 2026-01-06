@@ -232,6 +232,12 @@ function App() {
                 </button>
                 <button
                   className="primary-btn"
+                  style={{
+                    backgroundColor:
+                      newProduct.name && newProduct.quantity
+                        ? "#f44336"
+                        : "#45a049",
+                  }}
                   onClick={() => {
                     setNewProduct({ photo: "", name: "", quantity: "" });
                     setShowNewProduct(false);
@@ -322,6 +328,12 @@ function App() {
                   onClick={() => {
                     setNewLocation({ address: "", name: "" });
                     setShowNewLocation(false);
+                  }}
+                  style={{
+                    backgroundColor:
+                      newLocation.name && newLocation.address
+                        ? "#f44336"
+                        : "#45a049",
                   }}
                 >
                   Cancel
