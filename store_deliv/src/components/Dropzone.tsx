@@ -5,6 +5,7 @@ interface DropzoneProps {
   onUploadSuccess?: (filename: string) => void;
   onUploadError?: (error: string) => void;
   onFileUpload?: (file: File) => void;
+  onUpload: (url: string) => void;
   heading: string;
   uploadType: "photo";
 }

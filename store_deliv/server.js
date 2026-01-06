@@ -62,3 +62,51 @@ try {
   res.status(500).json({error: "Failed to read the locations."  })
 }
 })
+
+app.post("/api/products", (req, res) => {
+  try {
+    console.log("Received POST request:", req.body);
+    const products = readJSON(productsPath);
+    const { id, name, photo, quantity } = req.body;
+
+    const productIndex = productsPath.findIndex((product) => product.id === id);
+    if (productIndex === -1)
+      return res.status(404).json({ error: "Product not found" });
+
+    // Generate a unique ID for the new meeting
+    const newProductId = `m-${Date.now()}`;
+    const newProduct = {
+      id: newProductId,
+      name,
+      photo,
+      quantity,
+    };
+
+    // Initialize meetings array if it doesn't exist
+    if (!products[productIndex].products) {
+      products[productIndex].products = [];
+    }
+
+    // Add the new meeting to the room's meetings array
+    products[productIndex].products.push(newProduct);
+
+    writeJSON(productsPath, products);
+    res.json(products[productIndex]);
+  } catch (err) {
+    console.error("Error adding product:", err);
+    res.status(500).json({ error: "Failed to add product" });
+  }
+});
+
+app.post("/api/locations", (req, res) => {
+  try {
+    const locations = readJSON(locationsPath);
+    const newLocation = { id: Date.now().toString(), ...req.body };
+    locations.push(newLocation);
+    writeJSON(locationsPath, locations);
+    res.json(newLocation);
+  } catch (err) {
+    console.error("Error adding location:", err);
+    res.status(500).json({ error: "Failed to add location" });
+  }
+});
