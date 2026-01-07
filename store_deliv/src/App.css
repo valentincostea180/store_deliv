@@ -105,6 +105,7 @@ body {
   border-radius: 6px;
   font-size: 16px;
   transition: border-color 0.2s;
+  background-color: transparent;
 }
 
 .form-input:focus {
