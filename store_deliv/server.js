@@ -110,3 +110,20 @@ app.post("/api/locations", (req, res) => {
     res.status(500).json({ error: "Failed to add location" });
   }
 });
+
+app.delete("/api/products/:id", (req, res) => {
+  try {
+    const products = readJSON(productsPath);
+    const filteredProducts = products.filter(product => product.id !== req.params.id);
+    
+    if (filteredProducts.length === products.length) {
+      return res.status(404).json({ error: "Product not found." });
+    }
+    
+    writeJSON(productsPath, filteredProducts);
+    res.json({ message: "Product deleted successfully." });
+  } catch (err) {
+    console.error("Error deleting product:", err);
+    res.status(500).json({ error: "Failed to delete product." });
+  }
+});
