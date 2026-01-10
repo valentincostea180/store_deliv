@@ -127,3 +127,20 @@ app.delete("/api/products/:id", (req, res) => {
     res.status(500).json({ error: "Failed to delete product." });
   }
 });
+
+app.delete("/api/locations/:id", (req, res) => {
+  try {
+    const locations = readJSON(locationsPath);
+    const filteredLocations = locations.filter(locations => locations.id !== req.params.id);
+    
+    if (filteredLocations.length === locations.length) {
+      return res.status(404).json({ error: "Product not found." });
+    }
+    
+    writeJSON(locationsPath, filteredLocations);
+    res.json({ message: "Location deleted successfully." });
+  } catch (err) {
+    console.error("Error deleting Location:", err);
+    res.status(500).json({ error: "Failed to delete Location." });
+  }
+});
