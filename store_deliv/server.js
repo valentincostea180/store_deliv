@@ -144,3 +144,7 @@ app.delete("/api/locations/:id", (req, res) => {
     res.status(500).json({ error: "Failed to delete Location." });
   }
 });
+
+app.listen(PORT, () => {
+  console.log(`Server is running on http://localhost:${PORT}`);
+});
