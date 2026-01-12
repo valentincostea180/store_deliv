@@ -1,5 +1,9 @@
 // server.js
 import express from "express";
+import cors from "cors";
+import path from "path";
+import fs from "fs";
+import { fileURLToPath } from "url";
 
 // create __dirname in ESM
 const __filename = fileURLToPath(import.meta.url);
@@ -148,3 +152,4 @@ app.delete("/api/locations/:id", (req, res) => {
 app.listen(PORT, () => {
   console.log(`Server is running on http://localhost:${PORT}`);
 });
+
