@@ -77,7 +77,6 @@ app.post("/api/products", (req, res) => {
     if (productIndex === -1)
       return res.status(404).json({ error: "Product not found" });
 
-    // Generate a unique ID for the new meeting
     const newProductId = `m-${Date.now()}`;
     const newProduct = {
       id: newProductId,
@@ -86,12 +85,11 @@ app.post("/api/products", (req, res) => {
       quantity,
     };
 
-    // Initialize meetings array if it doesn't exist
+
     if (!products[productIndex].products) {
       products[productIndex].products = [];
     }
 
-    // Add the new meeting to the room's meetings array
     products[productIndex].products.push(newProduct);
 
     writeJSON(productsPath, products);
