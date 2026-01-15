@@ -45,6 +45,12 @@ function App() {
       setProducts([...products, product]);
       setNewProduct({ photo: "", name: "", quantity: "" });
       setShowNewProduct(false);
+
+      fetch(`http://localhost:5000/api/products`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(product),
+      });
     }
   };
 
