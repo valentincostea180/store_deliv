@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import "./App.css";
 import Dropzone from "./components/Dropzone";
 
@@ -33,6 +33,13 @@ function App() {
   const [products, setProducts] = useState<Product[]>([]);
   const [locations, setLocations] = useState<Location[]>([]);
 
+  useEffect(() => {
+    fetch(`http://localhost:5000/api/products`)
+      .then((response) => response.json())
+      .then((data) => setProducts(data))
+      .catch((error) => console.error("Error loading visitors:", error));
+  }, []);
+
   const handleAddProduct = () => {
     if (newProduct.name && newProduct.quantity) {
       const product: Product = {
@@ -50,7 +57,7 @@ function App() {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(product),
-      });
+      }).then((res) => res.json());
     }
   };
 

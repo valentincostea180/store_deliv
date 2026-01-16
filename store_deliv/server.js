@@ -69,31 +69,11 @@ try {
 
 app.post("/api/products", (req, res) => {
   try {
-    console.log("Received POST request:", req.body);
     const products = readJSON(productsPath);
-    const { id, name, photo, quantity } = req.body;
-
-    const productIndex = productsPath.findIndex((product) => product.id === id);
-    if (productIndex === -1)
-      return res.status(404).json({ error: "Product not found" });
-
-    const newProductId = `m-${Date.now()}`;
-    const newProduct = {
-      id: newProductId,
-      name,
-      photo,
-      quantity,
-    };
-
-
-    if (!products[productIndex].products) {
-      products[productIndex].products = [];
-    }
-
-    products[productIndex].products.push(newProduct);
-
+    const newProd = { id: Date.now().toString(), ...req.body };
+    products.push(newProd);
     writeJSON(productsPath, products);
-    res.json(products[productIndex]);
+    res.json(newProd);
   } catch (err) {
     console.error("Error adding product:", err);
     res.status(500).json({ error: "Failed to add product" });
