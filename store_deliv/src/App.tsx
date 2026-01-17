@@ -49,7 +49,6 @@ function App() {
         quantity: newProduct.quantity,
       };
 
-      setProducts([...products, product]);
       setNewProduct({ photo: "", name: "", quantity: "" });
       setShowNewProduct(false);
 
@@ -179,8 +178,8 @@ function App() {
                 {showNewProduct
                   ? "Cancel"
                   : products.length === 0
-                  ? "Add Product"
-                  : "Add Another Product"}
+                    ? "Add Product"
+                    : "Add Another Product"}
               </button>
             </div>
           ) : showNewProduct ? (
@@ -230,7 +229,26 @@ function App() {
               </div>
             </div>
           ) : (
-            <div className="table-container">{renderProductTable()}</div>
+            <>
+              <div className="table-container">{renderProductTable()}</div>
+              <button
+                className="secondary-btn"
+                onClick={() => {
+                  if (showNewProduct) {
+                    setNewProduct({ name: "", photo: "", quantity: "" });
+                    setShowNewProduct(false);
+                  } else {
+                    setShowNewProduct(true);
+                  }
+                }}
+              >
+                {showNewProduct
+                  ? "Cancel"
+                  : products.length === 0
+                    ? "Add Product"
+                    : "Add Another Product"}
+              </button>
+            </>
           )}
 
           <div className="action-buttons">
@@ -282,8 +300,8 @@ function App() {
                 {showNewLocation
                   ? "Cancel"
                   : locations.length === 0
-                  ? "Add Location"
-                  : "Add Another Location"}
+                    ? "Add Location"
+                    : "Add Another Location"}
               </button>
             </div>
           ) : showNewLocation ? (

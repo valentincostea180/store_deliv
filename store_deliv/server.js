@@ -17,7 +17,6 @@ app.use(cors());
 app.use(express.json());
 app.use(express.static(path.join(__dirname, "public"))); // Serve static files from public directory
 
-// Ensure public/data directory exists
 const dataDir = path.join(__dirname, "public", "data");
 if (!fs.existsSync(dataDir)) {
   fs.mkdirSync(dataDir, { recursive: true });
