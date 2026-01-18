@@ -38,10 +38,7 @@ export default function Dropzone({
 
       const formData = new FormData();
 
-      // Server expects the field name to be "file" for both endpoints
       formData.append("file", file);
-
-      // Determine the correct endpoint based on uploadType
       const endpoint = "http://localhost:5000/upload";
 
       try {
@@ -53,7 +50,7 @@ export default function Dropzone({
         if (!response.ok) {
           const errorData = await response.json().catch(() => ({}));
           throw new Error(
-            errorData.message || `Upload failed with status ${response.status}`
+            errorData.message || `Upload failed with status ${response.status}`,
           );
         }
 
@@ -62,14 +59,14 @@ export default function Dropzone({
       } catch (error) {
         console.error("Upload error:", error);
         onUploadError?.(
-          error instanceof Error ? error.message : "Upload failed"
+          error instanceof Error ? error.message : "Upload failed",
         );
       } finally {
         setUploading(false);
         setProgress(0);
       }
     },
-    [onUploadSuccess, onUploadError, uploadType, onFileUpload]
+    [onUploadSuccess, onUploadError, uploadType, onFileUpload],
   );
 
   const { getRootProps, getInputProps, isDragActive } = useDropzone({
