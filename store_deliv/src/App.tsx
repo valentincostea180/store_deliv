@@ -40,6 +40,13 @@ function App() {
       .catch((error) => console.error("Error loading visitors:", error));
   }, []);
 
+  useEffect(() => {
+    fetch(`http://localhost:5000/api/locations`)
+      .then((response) => response.json())
+      .then((data) => setLocations(data))
+      .catch((error) => console.error("Error loading visitors:", error));
+  }, []);
+
   const handleAddProduct = () => {
     if (newProduct.name && newProduct.quantity) {
       const product: Product = {
