@@ -354,7 +354,26 @@ function App() {
               </div>
             </div>
           ) : (
-            <div className="table-container">{renderLocationTable()}</div>
+            <>
+              <div className="table-container">{renderLocationTable()}</div>
+              <button
+                className="secondary-btn"
+                onClick={() => {
+                  if (showNewLocation) {
+                    setNewLocation({ name: "", address: "" });
+                    setShowNewLocation(false);
+                  } else {
+                    setShowNewLocation(true);
+                  }
+                }}
+              >
+                {showNewLocation
+                  ? "Cancel"
+                  : locations.length === 0
+                    ? "Add Location"
+                    : "Add Another Location"}
+              </button>
+            </>
           )}
 
           <div className="action-buttons">
