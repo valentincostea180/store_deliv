@@ -255,11 +255,7 @@ function App() {
                   }
                 }}
               >
-                {showNewProduct
-                  ? "Cancel"
-                  : products.length === 0
-                    ? "Add Product"
-                    : "Add Another Product"}
+                Add Product
               </button>
             </>
           )}
@@ -310,11 +306,7 @@ function App() {
                   }
                 }}
               >
-                {showNewLocation
-                  ? "Cancel"
-                  : locations.length === 0
-                    ? "Add Location"
-                    : "Add Another Location"}
+                Add Location
               </button>
             </div>
           ) : showNewLocation ? (
