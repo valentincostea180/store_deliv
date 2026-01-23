@@ -75,7 +75,6 @@ function App() {
         address: newLocation.address,
       };
 
-      setLocations([...locations, location]);
       setNewLocation({ name: "", address: "" });
       setShowNewLocation(false);
 
