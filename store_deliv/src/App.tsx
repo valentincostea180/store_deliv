@@ -16,6 +16,20 @@ interface Location {
 }
 
 function App() {
+  useEffect(() => {
+    fetch(`http://localhost:5000/api/products`)
+      .then((response) => response.json())
+      .then((data) => setProducts(data))
+      .catch((error) => console.error("Error loading products:", error));
+  }, []);
+
+  useEffect(() => {
+    fetch(`http://localhost:5000/api/locations`)
+      .then((response) => response.json())
+      .then((data) => setLocations(data))
+      .catch((error) => console.error("Error loading locations:", error));
+  }, []);
+
   const [showNewProduct, setShowNewProduct] = useState(false);
   const [showNewLocation, setShowNewLocation] = useState(false);
 
@@ -32,20 +46,6 @@ function App() {
 
   const [products, setProducts] = useState<Product[]>([]);
   const [locations, setLocations] = useState<Location[]>([]);
-
-  useEffect(() => {
-    fetch(`http://localhost:5000/api/products`)
-      .then((response) => response.json())
-      .then((data) => setProducts(data))
-      .catch((error) => console.error("Error loading visitors:", error));
-  }, []);
-
-  useEffect(() => {
-    fetch(`http://localhost:5000/api/locations`)
-      .then((response) => response.json())
-      .then((data) => setLocations(data))
-      .catch((error) => console.error("Error loading visitors:", error));
-  }, []);
 
   const handleAddProduct = () => {
     if (newProduct.name && newProduct.quantity) {
