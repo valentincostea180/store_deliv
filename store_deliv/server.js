@@ -28,7 +28,7 @@ const locationsPath = path.join(dataDir, "location.json");
 if (!fs.existsSync(locationsPath))
   fs.writeFileSync(locationsPath, JSON.stringify([], null, 2));
 if (!fs.existsSync(productsPath))
-  fs.writeFileSync(productsPath, JSON.stringify({}, null, 2)); 
+  fs.writeFileSync(productsPath, JSON.stringify([], null, 2)); 
 
 const readJSON = (filePath) => {
   try {
@@ -60,7 +60,7 @@ app.get("/api/products", (req, res) => {
 app.get("/api/locations", (reg,res) => {
 try {
   const locations = readJSON(locationsPath);
-  res.json(locaitons);
+  res.json(locations);
 } catch(err) {
   res.status(500).json({error: "Failed to read the locations."  })
 }
@@ -115,7 +115,7 @@ app.delete("/api/locations/:id", (req, res) => {
     const filteredLocations = locations.filter(locations => locations.id !== req.params.id);
     
     if (filteredLocations.length === locations.length) {
-      return res.status(404).json({ error: "Product not found." });
+      return res.status(404).json({ error: "Location not found." });
     }
     
     writeJSON(locationsPath, filteredLocations);
