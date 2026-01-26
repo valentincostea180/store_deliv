@@ -87,7 +87,23 @@ function App() {
   };
 
   const handleRemoveProduct = (id: string) => {
-    setProducts(products.filter((product) => product.id !== id));
+    const confirmDelete = window.confirm(
+      "Are you sure you want to delete this prducts?",
+    );
+    if (!confirmDelete) return;
+
+    try {
+      const res = fetch(`http://localhost:5000/api/products/${id}`, {
+        method: "DELETE",
+      });
+
+      if (!res.ok) throw new Error("Nu s-a putut elimina produsul pe server.");
+
+      setProducts((prev) => prev.filter((product) => product.id !== id));
+    } catch (err) {
+      console.error(err);
+      alert("Eroare la eliminarea produsului de pe server.");
+    }
   };
 
   const handleRemoveLocation = (id: string) => {
