@@ -93,11 +93,9 @@ function App() {
     if (!confirmDelete) return;
 
     try {
-      const res = fetch(`http://localhost:5000/api/products/${id}`, {
+      fetch(`http://localhost:5000/api/products/${id}`, {
         method: "DELETE",
       });
-
-      if (!res.ok) throw new Error("Nu s-a putut elimina produsul pe server.");
 
       setProducts((prev) => prev.filter((product) => product.id !== id));
     } catch (err) {
