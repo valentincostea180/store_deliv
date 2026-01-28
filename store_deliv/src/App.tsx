@@ -105,7 +105,21 @@ function App() {
   };
 
   const handleRemoveLocation = (id: string) => {
-    setLocations(locations.filter((location) => location.id !== id));
+    const confirmDelete = window.confirm(
+      "Are you sure you want to delete this prducts?",
+    );
+    if (!confirmDelete) return;
+
+    try {
+      fetch(`http://localhost:5000/api/locations/${id}`, {
+        method: "DELETE",
+      });
+
+      setLocations(locations.filter((location) => location.id !== id));
+    } catch (err) {
+      console.error(err);
+      alert("Eroare la eliminarea locatiei de pe server.");
+    }
   };
 
   const renderProductTable = () => {
