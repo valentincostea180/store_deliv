@@ -129,7 +129,7 @@ body {
 }
 
 .data-table th {
-  background-color: var(--background-color);
+  background-color: var(--border-color);
   padding: 15px;
   text-align: center;
   font-weight: 600;
@@ -274,8 +274,4 @@ table tr:last-child td:first-child {
     
 table tr:last-child td:last-child {
     border-bottom-right-radius: 10px;
-}
-
-table th {
-  background-color: var(--border-color);
 }
