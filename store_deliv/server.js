@@ -92,6 +92,12 @@ app.post("/api/locations", (req, res) => {
   }
 });
 
+app.post("/upload", (req, res) => {
+  try {
+  } catch (err) {
+  }
+});
+
 app.delete("/api/products/:id", (req, res) => {
   try {
     const products = readJSON(productsPath);

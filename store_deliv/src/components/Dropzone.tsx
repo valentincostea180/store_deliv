@@ -2,21 +2,12 @@ import { useCallback, useState } from "react";
 import { useDropzone } from "react-dropzone";
 
 interface DropzoneProps {
-  onUploadSuccess?: (filename: string) => void;
-  onUploadError?: (error: string) => void;
-  onFileUpload?: (file: File) => void;
   onUpload: (url: string) => void;
   heading: string;
   uploadType: "photo";
 }
 
-export default function Dropzone({
-  onUploadSuccess,
-  onUploadError,
-  onFileUpload,
-  heading,
-  uploadType,
-}: DropzoneProps) {
+export default function Dropzone({ heading, uploadType }: DropzoneProps) {
   const [uploading, setUploading] = useState(false);
   const [progress, setProgress] = useState(0);
 
@@ -25,12 +16,6 @@ export default function Dropzone({
       if (acceptedFiles.length === 0) return;
 
       const file = acceptedFiles[0];
-
-      // If onFileUpload is provided, use it instead of the default upload logic
-      if (onFileUpload) {
-        onFileUpload(file);
-        return;
-      }
 
       // Default upload logic
       setUploading(true);
@@ -53,20 +38,14 @@ export default function Dropzone({
             errorData.message || `Upload failed with status ${response.status}`,
           );
         }
-
-        const result = await response.json();
-        onUploadSuccess?.(result.filename);
       } catch (error) {
         console.error("Upload error:", error);
-        onUploadError?.(
-          error instanceof Error ? error.message : "Upload failed",
-        );
       } finally {
         setUploading(false);
         setProgress(0);
       }
     },
-    [onUploadSuccess, onUploadError, uploadType, onFileUpload],
+    [uploadType],
   );
 
   const { getRootProps, getInputProps, isDragActive } = useDropzone({
