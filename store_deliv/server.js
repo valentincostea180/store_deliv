@@ -133,7 +133,6 @@ app.post("/upload", upload.single("file"), (req, res) => {
       return res.status(400).json({ error: "No file uploaded" });
     }
     
-    // Generate the URL for the uploaded file
     const fileUrl = `/uploads/${req.file.filename}`;
     
     res.json({ 
