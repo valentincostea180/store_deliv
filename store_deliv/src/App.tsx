@@ -5,10 +5,9 @@ import Dropzone from "./components/Dropzone";
 interface Product {
   id: string;
   name: string;
-  photo: string;
+  photo: string | null;
   quantity: string;
 }
-
 interface Location {
   id: string;
   name: string;
@@ -33,8 +32,9 @@ function App() {
   const [showNewProduct, setShowNewProduct] = useState(false);
   const [showNewLocation, setShowNewLocation] = useState(false);
 
-  const [newProduct, setNewProduct] = useState({
-    photo: "",
+  const [newProduct, setNewProduct] = useState<Product>({
+    id: "",
+    photo: null,
     name: "",
     quantity: "",
   });
@@ -49,24 +49,35 @@ function App() {
 
   const handleAddProduct = () => {
     if (newProduct.name && newProduct.quantity) {
-      const product: Product = {
-        id: Date.now().toString(),
+      // Generate ID once here
+      const productId = Date.now().toString();
+
+      const productToSave: Product = {
+        id: productId,
         name: newProduct.name,
-        photo: newProduct.photo,
+        photo: newProduct.photo, // This should now have the uploaded URL
         quantity: newProduct.quantity,
       };
-
-      setNewProduct({ photo: "", name: "", quantity: "" });
-      setShowNewProduct(false);
 
       fetch(`http://localhost:5000/api/products`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(product),
+        body: JSON.stringify(productToSave),
       })
         .then((res) => res.json())
         .then((savedProduct) => {
           setProducts((prev) => [savedProduct, ...prev].slice(0, 5));
+          // Reset form
+          setNewProduct({
+            id: "",
+            photo: null,
+            name: "",
+            quantity: "",
+          });
+          setShowNewProduct(false);
+        })
+        .catch((error) => {
+          console.error("Error saving product:", error);
         });
     }
   };
@@ -212,7 +223,12 @@ function App() {
                 className="secondary-btn"
                 onClick={() => {
                   if (showNewProduct) {
-                    setNewProduct({ name: "", photo: "", quantity: "" });
+                    setNewProduct({
+                      id: "",
+                      name: "",
+                      photo: "",
+                      quantity: "",
+                    });
                     setShowNewProduct(false);
                   } else {
                     setShowNewProduct(true);
@@ -262,13 +278,32 @@ function App() {
                 </div>
 
                 <div className="form-group">
-                  <Dropzone
-                    heading="Photo"
-                    uploadType="photo"
-                    onUpload={(url: string) =>
-                      setNewProduct({ ...newProduct, photo: url })
-                    }
-                  />
+                  <div className="form-group">
+                    <Dropzone
+                      heading="Photo"
+                      uploadType="photo"
+                      onUpload={(url: string) => {
+                        setNewProduct((prev) => ({
+                          ...prev,
+                          photo: url,
+                        }));
+                      }}
+                    />
+                    {newProduct.photo && (
+                      <div className="photo-preview">
+                        <img
+                          src={`http://localhost:5000${newProduct.photo}`}
+                          alt="Preview"
+                          style={{
+                            maxWidth: "100px",
+                            maxHeight: "100px",
+                            marginTop: "10px",
+                          }}
+                        />
+                        <small>Photo uploaded successfully!</small>
+                      </div>
+                    )}
+                  </div>
                 </div>
               </div>
             </div>
@@ -279,7 +314,12 @@ function App() {
                 className="secondary-btn"
                 onClick={() => {
                   if (showNewProduct) {
-                    setNewProduct({ name: "", photo: "", quantity: "" });
+                    setNewProduct({
+                      id: "",
+                      name: "",
+                      photo: "",
+                      quantity: "",
+                    });
                     setShowNewProduct(false);
                   } else {
                     setShowNewProduct(true);
@@ -310,7 +350,12 @@ function App() {
                         : "#45a049",
                   }}
                   onClick={() => {
-                    setNewProduct({ photo: "", name: "", quantity: "" });
+                    setNewProduct({
+                      id: "",
+                      name: "",
+                      photo: "",
+                      quantity: "",
+                    });
                     setShowNewProduct(false);
                   }}
                 >

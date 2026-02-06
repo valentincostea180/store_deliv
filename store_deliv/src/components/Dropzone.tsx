@@ -30,6 +30,7 @@ export default function Dropzone({ heading, uploadType }: DropzoneProps) {
         const response = await fetch(endpoint, {
           method: "POST",
           body: formData,
+          // No headers needed for FormData
         });
 
         if (!response.ok) {
@@ -38,11 +39,18 @@ export default function Dropzone({ heading, uploadType }: DropzoneProps) {
             errorData.message || `Upload failed with status ${response.status}`,
           );
         }
+
+        const result = await response.json();
+
+        // IMPORTANT: Call onUpload with the returned URL
+        if (result.url) {
+          console.log("Upload successful, URL:", result.url);
+        } else {
+          console.error("No URL in response:", result);
+        }
       } catch (error) {
         console.error("Upload error:", error);
-      } finally {
-        setUploading(false);
-        setProgress(0);
+        alert("Failed to upload file. Please try again.");
       }
     },
     [uploadType],
@@ -54,8 +62,6 @@ export default function Dropzone({ heading, uploadType }: DropzoneProps) {
     accept: {
       "image/jpeg": [".jpg", ".jpeg"],
       "image/png": [".png"],
-      "image/gif": [".gif"],
-      "image/webp": [".webp"],
     },
     maxFiles: 1,
   });
