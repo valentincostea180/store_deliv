@@ -279,28 +279,31 @@ function App() {
 
                 <div className="form-group">
                   <div className="form-group">
-                    <Dropzone
-                      heading="Photo"
-                      uploadType="photo"
-                      onUpload={(url: string) => {
-                        setNewProduct((prev) => ({
-                          ...prev,
-                          photo: url,
-                        }));
-                      }}
-                    />
+                    {!newProduct.photo && (
+                      <Dropzone
+                        heading="Photo"
+                        uploadType="photo"
+                        onUpload={(url: string) => {
+                          setNewProduct((prev) => ({
+                            ...prev,
+                            photo: url,
+                          }));
+                        }}
+                      />
+                    )}
                     {newProduct.photo && (
                       <div className="photo-preview">
                         <img
                           src={`http://localhost:5000${newProduct.photo}`}
                           alt="Preview"
                           style={{
-                            maxWidth: "100px",
-                            maxHeight: "100px",
+                            borderRadius: "15px",
+                            alignContent: "center",
+                            maxWidth: "300px",
+                            maxHeight: "300px",
                             marginTop: "10px",
                           }}
                         />
-                        <small>Photo uploaded successfully!</small>
                       </div>
                     )}
                   </div>
