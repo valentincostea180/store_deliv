@@ -104,7 +104,10 @@ try {
 app.post("/api/products", (req, res) => {
   try {
     const products = readJSON(productsPath);
-    const newProd = { id: Date.now().toString(),  ...req.body };
+    const newProd = { 
+      id: Date.now().toString(), 
+      ...req.body
+    };
     products.push(newProd);
     writeJSON(productsPath, products);
     res.json(newProd);

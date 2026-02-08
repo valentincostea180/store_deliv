@@ -156,7 +156,25 @@ function App() {
                 onClick={() => handleRemoveProduct(product.id)}
                 title="Click to remove this product"
               >
-                <td>{product.photo || "-"}</td>
+                <td>
+                  {product.photo ? (
+                    <img
+                      src={getFullPhotoUrl(product.photo)}
+                      alt={product.name}
+                      style={{
+                        width: "50px",
+                        height: "50px",
+                        objectFit: "cover",
+                        borderRadius: "4px",
+                      }}
+                      onError={(e) => {
+                        e.currentTarget.style.display = "none";
+                      }}
+                    />
+                  ) : (
+                    "-"
+                  )}
+                </td>
                 <td>{product.name}</td>
                 <td>{product.quantity}</td>
               </tr>
@@ -205,6 +223,14 @@ function App() {
         </tbody>
       </table>
     );
+  };
+
+  const getFullPhotoUrl = (photoPath: string | null): string | undefined => {
+    if (!photoPath) return undefined;
+    if (photoPath.startsWith("http")) return photoPath;
+    if (photoPath.startsWith("/uploads"))
+      return `http://localhost:5000${photoPath}`;
+    return `http://localhost:5000/uploads/${photoPath}`;
   };
 
   return (
