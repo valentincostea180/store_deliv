@@ -149,6 +149,40 @@ app.post("/upload", upload.single("file"), (req, res) => {
   }
 });
 
+app.delete("/api/uploads/:filename", (req, res) => {
+  try {
+    const filename = req.params.filename;
+    
+    if (filename.includes('..') || filename.includes('/')) {
+      return res.status(400).json({ error: "Invalid filename" });
+    }
+    
+    const filePath = path.join(__dirname, "public", "uploads", filename);
+    
+    if (!fs.existsSync(filePath)) {
+      return res.status(404).json({ error: "File not found" });
+    }
+    
+    // Delete the file
+    fs.unlink(filePath, (err) => {
+      if (err) {
+        console.error("Error deleting file:", err);
+        return res.status(500).json({ error: "Failed to delete file" });
+      }
+      
+      console.log(`Deleted file: ${filename}`);
+      res.json({ 
+        success: true, 
+        message: `File ${filename} deleted successfully`,
+        filename: filename
+      });
+    });
+  } catch (err) {
+    console.error("Error in delete endpoint:", err);
+    res.status(500).json({ error: "Failed to delete file" });
+  }
+});
+
 app.delete("/api/products/:id", (req, res) => {
   try {
     const products = readJSON(productsPath);
