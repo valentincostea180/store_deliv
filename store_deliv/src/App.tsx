@@ -261,11 +261,7 @@ function App() {
                   }
                 }}
               >
-                {showNewProduct
-                  ? "Cancel"
-                  : products.length === 0
-                    ? "Add Product"
-                    : "Add Another Product"}
+                {showNewProduct ? "Cancel" : "Add Product"}
               </button>
             </div>
           ) : showNewProduct ? (
