@@ -135,7 +135,7 @@ export default function Dropzone({
             <p className="dropzone-heading" style={{ textAlign: "center" }}>
               {heading}
             </p>
-            <p className="dropzone-instruction">
+            <p className="dropzone-instruction" style={{ textAlign: "center" }}>
               Click to select an image file (JPG or PNG)
             </p>
           </div>
