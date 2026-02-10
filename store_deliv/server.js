@@ -163,7 +163,6 @@ app.delete("/api/uploads/:filename", (req, res) => {
       return res.status(404).json({ error: "File not found" });
     }
     
-    // Delete the file
     fs.unlink(filePath, (err) => {
       if (err) {
         console.error("Error deleting file:", err);

@@ -49,13 +49,12 @@ function App() {
 
   const handleAddProduct = () => {
     if (newProduct.name && newProduct.quantity) {
-      // Generate ID once here
       const productId = Date.now().toString();
 
       const productToSave: Product = {
         id: productId,
         name: newProduct.name,
-        photo: newProduct.photo, // This should now have the uploaded URL
+        photo: newProduct.photo,
         quantity: newProduct.quantity,
       };
 
@@ -67,7 +66,6 @@ function App() {
         .then((res) => res.json())
         .then((savedProduct) => {
           setProducts((prev) => [savedProduct, ...prev].slice(0, 5));
-          // Reset form
           setNewProduct({
             id: "",
             photo: null,
@@ -101,7 +99,7 @@ function App() {
     }
   };
 
-  const handleRemoveProduct = (id: string) => {
+  const handleRemoveProduct = (id: string, photo: string | null) => {
     const confirmDelete = window.confirm(
       "Are you sure you want to delete this prducts?",
     );
@@ -113,6 +111,15 @@ function App() {
       });
 
       setProducts((prev) => prev.filter((product) => product.id !== id));
+    } catch (err) {
+      console.error(err);
+      alert("Eroare la eliminarea produsului de pe server.");
+    }
+
+    try {
+      fetch(`http://localhost:5000/api${photo}`, {
+        method: "DELETE",
+      });
     } catch (err) {
       console.error(err);
       alert("Eroare la eliminarea produsului de pe server.");
@@ -153,7 +160,7 @@ function App() {
               <tr
                 key={product.id}
                 className="clickable-row"
-                onClick={() => handleRemoveProduct(product.id)}
+                onClick={() => handleRemoveProduct(product.id, product.photo)}
                 title="Click to remove this product"
               >
                 <td>
