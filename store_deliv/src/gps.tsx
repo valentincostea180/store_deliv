@@ -3,12 +3,56 @@ interface Coordinates {
   lng: number;
   success: boolean;
   error?: string;
+  note?: string;
 }
 
-export function extractCoordinatesFromGoogleMapsUrl(url: string): Coordinates {
+async function unshortenUrl(shortUrl: string): Promise<string> {
   try {
-    // Clean the URL
-    const cleanUrl = url.trim();
+    const response = await fetch(
+      `https://unshorten.me/json/${encodeURIComponent(shortUrl)}`,
+    );
+
+    if (!response.ok) {
+      throw new Error("Failed to unshorten URL");
+    }
+
+    const data = await response.json();
+
+    if (data.success && data.resolved_url) {
+      return data.resolved_url;
+    }
+
+    throw new Error("Could not resolve URL");
+  } catch (error) {
+    console.error("Error unshortening URL:", error);
+    throw error;
+  }
+}
+
+export async function extractCoordinatesFromGoogleMapsUrl(
+  url: string,
+): Promise<Coordinates> {
+  try {
+    let cleanUrl = url.trim();
+
+    if (
+      cleanUrl.includes("goo.gl") ||
+      cleanUrl.includes("bit.ly") ||
+      cleanUrl.includes("tinyurl.com") ||
+      cleanUrl.includes("maps.app.goo.gl")
+    ) {
+      try {
+        const resolvedUrl = await unshortenUrl(cleanUrl);
+        cleanUrl = resolvedUrl;
+      } catch (error) {
+        return {
+          lat: 0,
+          lng: 0,
+          success: false,
+          error: `Failed to unshorten URL: ${error}`,
+        };
+      }
+    }
 
     // Pattern 1: @lat,lng
     const atPattern = /@(-?\d+\.\d+),(-?\d+\.\d+)/;
@@ -64,7 +108,6 @@ export function extractCoordinatesFromGoogleMapsUrl(url: string): Coordinates {
         success: true,
       };
     }
-
     return {
       lat: 0,
       lng: 0,

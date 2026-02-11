@@ -90,41 +90,44 @@ function App() {
     }
   };
 
-  const handleAddLocation = () => {
+  const handleAddLocation = async () => {
     if (newLocation.name && newLocation.address) {
       let coordinates = null;
-      if (newLocation.address.includes("google.com/maps")) {
-        const result = extractCoordinatesFromGoogleMapsUrl(newLocation.address);
+      try {
+        const result = await extractCoordinatesFromGoogleMapsUrl(
+          newLocation.address,
+        );
         if (result.success) {
           coordinates = { lat: result.lat, lng: result.lng };
-        } else {
-          setNewLocation({ name: "", address: "" });
         }
-      }
 
-      const location: Location = {
-        id: Date.now().toString(),
-        name: newLocation.name,
-        address: newLocation.address,
-        ...(coordinates && { coordinates }),
-      };
+        const location: Location = {
+          id: Date.now().toString(),
+          name: newLocation.name,
+          address: newLocation.address,
+          ...(coordinates && { coordinates }),
+        };
 
-      fetch(`http://localhost:5000/api/locations`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(location),
-      })
-        .then((res) => res.json())
-        .then((savedLocation) => {
-          setLocations((prev) => [savedLocation, ...prev]);
-          setNewLocation({ name: "", address: "" });
-          setShowNewLocation(false);
-          setExtractedCoords(null);
+        fetch(`http://localhost:5000/api/locations`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(location),
         })
-        .catch((error) => {
-          console.error("Error saving location:", error);
-          alert("Failed to save location");
-        });
+          .then((res) => res.json())
+          .then((savedLocation) => {
+            setLocations((prev) => [savedLocation, ...prev]);
+            setNewLocation({ name: "", address: "" });
+            setShowNewLocation(false);
+            setExtractedCoords(null);
+          })
+          .catch((error) => {
+            console.error("Error saving location:", error);
+            alert("Failed to save location");
+          });
+      } catch (error) {
+        console.error("Error extracting coordinates:", error);
+        setExtractedCoords(null);
+      }
     }
   };
 
@@ -265,18 +268,36 @@ function App() {
     );
   };
 
-  const handleAddressChange = (address: string) => {
+  const handleAddressChange = async (address: string) => {
     setNewLocation((prev) => ({ ...prev, address }));
+    setExtractedCoords(null);
 
-    if (address.includes("google.com/maps")) {
-      const result = extractCoordinatesFromGoogleMapsUrl(address);
-      if (result.success) {
-        setExtractedCoords({ lat: result.lat, lng: result.lng });
-      } else {
+    if (
+      address.includes("google.com/maps") ||
+      address.includes("goo.gl") ||
+      address.includes("maps.app.goo.gl")
+    ) {
+      try {
+        const result = await extractCoordinatesFromGoogleMapsUrl(address);
+
+        if (result.success) {
+          setExtractedCoords({
+            lat: result.lat,
+            lng: result.lng,
+          });
+
+          if (result.note) {
+            console.log("Note:", result.note);
+            // Optionally show a tooltip or message
+          }
+        } else {
+          setExtractedCoords(null);
+          console.log("Could not extract coordinates:", result.error);
+        }
+      } catch (error) {
+        console.error("Error extracting coordinates:", error);
         setExtractedCoords(null);
       }
-    } else {
-      setExtractedCoords(null);
     }
   };
 
