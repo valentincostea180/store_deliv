@@ -1,1 +1,16 @@
-[]
+[
+  {
+    "id": "1770822358055",
+    "name": "asdas",
+    "address": "asda"
+  },
+  {
+    "id": "1770823146207",
+    "name": "a",
+    "address": "google.com/maps/place/Politehnica/@44.4311871,26.0916647,14z/data=!4m6!3m5!1s0x40b201db457fcad1:0x8391e194c25fd743!8m2!3d44.4347652!4d26.0549592!16s%2Fg%2F12cnsqtfk?entry=ttu&g_ep=EgoyMDI2MDIwOC4wIKXMDSoASAFQAw%3D%3D",
+    "coordinates": {
+      "lat": 44.4311871,
+      "lng": 26.0916647
+    }
+  }
+]

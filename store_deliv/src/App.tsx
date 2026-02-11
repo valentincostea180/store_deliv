@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import "./App.css";
 import Dropzone from "./components/Dropzone";
+import { extractCoordinatesFromGoogleMapsUrl } from "./gps.tsx";
 
 interface Product {
   id: string;
@@ -8,10 +9,15 @@ interface Product {
   photo: string | null;
   quantity: string;
 }
+
 interface Location {
   id: string;
   name: string;
   address: string;
+  coordinates?: {
+    lat: number;
+    lng: number;
+  };
 }
 
 function App() {
@@ -46,6 +52,10 @@ function App() {
 
   const [products, setProducts] = useState<Product[]>([]);
   const [locations, setLocations] = useState<Location[]>([]);
+  const [extractedCoords, setExtractedCoords] = useState<{
+    lat: number;
+    lng: number;
+  } | null>(null);
 
   const handleAddProduct = () => {
     if (newProduct.name && newProduct.quantity) {
@@ -82,20 +92,37 @@ function App() {
 
   const handleAddLocation = () => {
     if (newLocation.name && newLocation.address) {
+      let coordinates = null;
+      if (newLocation.address.includes("google.com/maps")) {
+        const result = extractCoordinatesFromGoogleMapsUrl(newLocation.address);
+        if (result.success) {
+          coordinates = { lat: result.lat, lng: result.lng };
+        }
+      }
+
       const location: Location = {
         id: Date.now().toString(),
         name: newLocation.name,
         address: newLocation.address,
+        ...(coordinates && { coordinates }),
       };
-
-      setNewLocation({ name: "", address: "" });
-      setShowNewLocation(false);
 
       fetch(`http://localhost:5000/api/locations`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(location),
-      }).then((res) => res.json());
+      })
+        .then((res) => res.json())
+        .then((savedLocation) => {
+          setLocations((prev) => [savedLocation, ...prev]);
+          setNewLocation({ name: "", address: "" });
+          setShowNewLocation(false);
+          setExtractedCoords(null);
+        })
+        .catch((error) => {
+          console.error("Error saving location:", error);
+          alert("Failed to save location");
+        });
     }
   };
 
@@ -217,7 +244,11 @@ function App() {
                 title="Click to remove this location"
               >
                 <td>{location.name}</td>
-                <td>{location.address}</td>
+                <td>
+                  {location.coordinates
+                    ? `${location.coordinates.lat.toFixed(6)}, ${location.coordinates.lng.toFixed(6)}`
+                    : location.address}
+                </td>
               </tr>
             ))
           ) : (
@@ -230,6 +261,21 @@ function App() {
         </tbody>
       </table>
     );
+  };
+
+  const handleAddressChange = (address: string) => {
+    setNewLocation((prev) => ({ ...prev, address }));
+
+    if (address.includes("google.com/maps")) {
+      const result = extractCoordinatesFromGoogleMapsUrl(address);
+      if (result.success) {
+        setExtractedCoords({ lat: result.lat, lng: result.lng });
+      } else {
+        setExtractedCoords(null);
+      }
+    } else {
+      setExtractedCoords(null);
+    }
   };
 
   const getFullPhotoUrl = (photoPath: string | null): string | undefined => {
@@ -427,12 +473,7 @@ function App() {
                       type="text"
                       placeholder="Address"
                       value={newLocation.address}
-                      onChange={(e) =>
-                        setNewLocation({
-                          ...newLocation,
-                          address: e.target.value,
-                        })
-                      }
+                      onChange={(e) => handleAddressChange(e.target.value)}
                       className="form-input"
                     />
                   </div>
@@ -449,6 +490,15 @@ function App() {
                       }
                       className="form-input"
                     />
+                    {extractedCoords && (
+                      <div className="coordinates-display">
+                        <small>
+                          Coordinates extracted:{" "}
+                          {extractedCoords.lat.toFixed(6)},{" "}
+                          {extractedCoords.lng.toFixed(6)}
+                        </small>
+                      </div>
+                    )}
                   </div>
                 </div>
               </div>
