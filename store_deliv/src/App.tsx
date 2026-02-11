@@ -38,6 +38,13 @@ function App() {
   const [showNewProduct, setShowNewProduct] = useState(false);
   const [showNewLocation, setShowNewLocation] = useState(false);
 
+  const [products, setProducts] = useState<Product[]>([]);
+  const [locations, setLocations] = useState<Location[]>([]);
+  const [extractedCoords, setExtractedCoords] = useState<{
+    lat: number;
+    lng: number;
+  } | null>(null);
+
   const [newProduct, setNewProduct] = useState<Product>({
     id: "",
     photo: null,
@@ -49,13 +56,6 @@ function App() {
     name: "",
     address: "",
   });
-
-  const [products, setProducts] = useState<Product[]>([]);
-  const [locations, setLocations] = useState<Location[]>([]);
-  const [extractedCoords, setExtractedCoords] = useState<{
-    lat: number;
-    lng: number;
-  } | null>(null);
 
   const handleAddProduct = () => {
     if (newProduct.name && newProduct.quantity) {
@@ -97,6 +97,8 @@ function App() {
         const result = extractCoordinatesFromGoogleMapsUrl(newLocation.address);
         if (result.success) {
           coordinates = { lat: result.lat, lng: result.lng };
+        } else {
+          setNewLocation({ name: "", address: "" });
         }
       }
 
