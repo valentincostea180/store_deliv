@@ -20,6 +20,12 @@ interface Location {
   };
 }
 
+interface Journey {
+  id: string;
+  location: Location;
+  product: Product;
+}
+
 function App() {
   useEffect(() => {
     fetch(`http://localhost:5000/api/products`)
@@ -35,11 +41,17 @@ function App() {
       .catch((error) => console.error("Error loading locations:", error));
   }, []);
 
+  const [showProductModal, setShowProductModal] = useState(false);
+  const [showLocationModal, setShowLocationModal] = useState(false);
+
   const [showNewProduct, setShowNewProduct] = useState(false);
   const [showNewLocation, setShowNewLocation] = useState(false);
+  const [showNewJourney, setShowNewJourney] = useState(false);
 
   const [products, setProducts] = useState<Product[]>([]);
   const [locations, setLocations] = useState<Location[]>([]);
+  const [journeys, setJourneys] = useState<Journey[]>([]);
+
   const [extractedCoords, setExtractedCoords] = useState<{
     lat: number;
     lng: number;
@@ -51,10 +63,14 @@ function App() {
     name: "",
     quantity: "",
   });
-
   const [newLocation, setNewLocation] = useState({
     name: "",
     address: "",
+  });
+  const [newJourney, setNewJourney] = useState<Partial<Journey>>({
+    id: "",
+    location: undefined,
+    product: undefined,
   });
 
   const handleAddProduct = () => {
@@ -89,7 +105,6 @@ function App() {
         });
     }
   };
-
   const handleAddLocation = async () => {
     if (newLocation.name && newLocation.address) {
       let coordinates = null;
@@ -128,6 +143,38 @@ function App() {
         console.error("Error extracting coordinates:", error);
         setExtractedCoords(null);
       }
+    }
+  };
+  const handleAddJourney = () => {
+    if (newJourney.product && newJourney.location) {
+      const journeyId = Date.now().toString();
+
+      const productToSave: Product = {
+        id: newProduct.id,
+        name: newProduct.name,
+        photo: newProduct.photo,
+        quantity: newProduct.quantity,
+      };
+
+      fetch(`http://localhost:5000/api/products`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(productToSave),
+      })
+        .then((res) => res.json())
+        .then((savedProduct) => {
+          setProducts((prev) => [savedProduct, ...prev].slice(0, 5));
+          setNewProduct({
+            id: "",
+            photo: null,
+            name: "",
+            quantity: "",
+          });
+          setShowNewProduct(false);
+        })
+        .catch((error) => {
+          console.error("Error saving product:", error);
+        });
     }
   };
 
@@ -193,6 +240,7 @@ function App() {
                 key={product.id}
                 className="clickable-row"
                 onClick={() => handleRemoveProduct(product.id, product.photo)}
+                /* onClick={() => handleAddProductToJourney(product)} */
                 title="Click to remove this product"
               >
                 <td>
@@ -288,7 +336,6 @@ function App() {
 
           if (result.note) {
             console.log("Note:", result.note);
-            // Optionally show a tooltip or message
           }
         } else {
           setExtractedCoords(null);
@@ -308,7 +355,6 @@ function App() {
       return `http://localhost:5000${photoPath}`;
     return `http://localhost:5000/uploads/${photoPath}`;
   };
-
   return (
     <div className="app-container">
       <div className="app-header">
@@ -316,120 +362,325 @@ function App() {
       </div>
 
       <div className="app-content">
-        {/* Products Panel */}
+        {/* Journey Panel */}
         <div className="content-panel">
-          {!showNewProduct && products.length === 0 ? (
+          {!showNewJourney && journeys.length === 0 ? (
             <div className="empty-state">
-              <h2>There are no deliverables saved.</h2>
+              <h2>There are no journeys saved.</h2>
               <button
                 className="secondary-btn"
                 onClick={() => {
-                  if (showNewProduct) {
-                    setNewProduct({
+                  if (showNewJourney) {
+                    setNewJourney({
                       id: "",
-                      name: "",
-                      photo: "",
-                      quantity: "",
+                      location: undefined,
+                      product: undefined,
                     });
-                    setShowNewProduct(false);
+                    setShowNewJourney(false);
                   } else {
-                    setShowNewProduct(true);
+                    setShowNewJourney(true);
                   }
                 }}
               >
-                {showNewProduct ? "Cancel" : "Add Product"}
+                {showNewJourney ? "Cancel" : "Add Journey"}
               </button>
             </div>
-          ) : showNewProduct ? (
+          ) : (
             <div className="form-container">
-              <h2>Add New Deliverable</h2>
+              <h2>Add New Journey</h2>
               <div className="form-row">
                 <div className="form-group">
                   <div className="input-wrapper">
-                    <input
-                      type="text"
-                      placeholder="Product name"
-                      value={newProduct.name}
-                      onChange={(e) =>
-                        setNewProduct({ ...newProduct, name: e.target.value })
-                      }
-                      className="form-input"
-                    />
+                    {/* Products Modal */}
+                    {showProductModal && (
+                      <div className="content-panel">
+                        {!showNewProduct && products.length === 0 ? (
+                          <div className="empty-state">
+                            <h2>There are no deliverables saved.</h2>
+                            <button
+                              className="secondary-btn"
+                              onClick={() => {
+                                if (showNewProduct) {
+                                  setNewProduct({
+                                    id: "",
+                                    name: "",
+                                    photo: "",
+                                    quantity: "",
+                                  });
+                                  setShowNewProduct(false);
+                                } else {
+                                  setShowNewProduct(true);
+                                }
+                              }}
+                            >
+                              {showNewProduct ? "Cancel" : "Add Product"}
+                            </button>
+                          </div>
+                        ) : showNewProduct ? (
+                          <div className="form-container">
+                            <h2>Add New Deliverable</h2>
+                            <div className="form-row">
+                              <div className="form-group">
+                                <div className="input-wrapper">
+                                  <input
+                                    type="text"
+                                    placeholder="Product name"
+                                    value={newProduct.name}
+                                    onChange={(e) =>
+                                      setNewProduct({
+                                        ...newProduct,
+                                        name: e.target.value,
+                                      })
+                                    }
+                                    className="form-input"
+                                  />
+                                </div>
+                              </div>
+
+                              <div className="form-group">
+                                <div className="input-wrapper">
+                                  <input
+                                    type="text"
+                                    placeholder="Quantity"
+                                    value={newProduct.quantity}
+                                    onChange={(e) =>
+                                      setNewProduct({
+                                        ...newProduct,
+                                        quantity: e.target.value,
+                                      })
+                                    }
+                                    className="form-input"
+                                  />
+                                </div>
+                              </div>
+
+                              <div className="form-group">
+                                <div className="form-group">
+                                  {!newProduct.photo && (
+                                    <Dropzone
+                                      heading="Photo"
+                                      uploadType="photo"
+                                      onUpload={(url: string) => {
+                                        setNewProduct((prev) => ({
+                                          ...prev,
+                                          photo: url,
+                                        }));
+                                      }}
+                                    />
+                                  )}
+                                  {newProduct.photo && (
+                                    <div className="photo-preview">
+                                      <img
+                                        src={`http://localhost:5000${newProduct.photo}`}
+                                        alt="Preview"
+                                        style={{
+                                          borderRadius: "15px",
+                                          alignContent: "center",
+                                          maxWidth: "300px",
+                                          maxHeight: "300px",
+                                          marginTop: "10px",
+                                        }}
+                                      />
+                                    </div>
+                                  )}
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                        ) : (
+                          <>
+                            <div className="table-container">
+                              {renderProductTable()}
+                            </div>
+                            <button
+                              className="secondary-btn"
+                              onClick={() => {
+                                if (showNewProduct) {
+                                  setNewProduct({
+                                    id: "",
+                                    name: "",
+                                    photo: "",
+                                    quantity: "",
+                                  });
+                                  setShowNewProduct(false);
+                                } else {
+                                  setShowNewProduct(true);
+                                }
+                              }}
+                            >
+                              Add Product
+                            </button>
+                          </>
+                        )}
+
+                        <div className="action-buttons">
+                          {showNewProduct && (
+                            <>
+                              <button
+                                className="primary-btn"
+                                onClick={handleAddProduct}
+                                disabled={
+                                  !newProduct.name || !newProduct.quantity
+                                }
+                              >
+                                Save Product
+                              </button>
+                              <button
+                                className="primary-btn"
+                                style={{
+                                  backgroundColor:
+                                    newProduct.name && newProduct.quantity
+                                      ? "#f44336"
+                                      : "#45a049",
+                                }}
+                                onClick={() => {
+                                  setNewProduct({
+                                    id: "",
+                                    name: "",
+                                    photo: "",
+                                    quantity: "",
+                                  });
+                                  setShowNewProduct(false);
+                                }}
+                              >
+                                Cancel
+                              </button>
+                            </>
+                          )}
+                        </div>
+                      </div>
+                    )}
                   </div>
                 </div>
 
                 <div className="form-group">
                   <div className="input-wrapper">
-                    <input
-                      type="text"
-                      placeholder="Quantity"
-                      value={newProduct.quantity}
-                      onChange={(e) =>
-                        setNewProduct({
-                          ...newProduct,
-                          quantity: e.target.value,
-                        })
-                      }
-                      className="form-input"
-                    />
-                  </div>
-                </div>
+                    {/* Locations Modal */}
+                    {showLocationModal && (
+                      <div className="content-panel">
+                        {!showNewLocation && locations.length === 0 ? (
+                          <div className="empty-state">
+                            <h2>There are no locations saved.</h2>
+                            <button
+                              className="secondary-btn"
+                              onClick={() => {
+                                if (showNewLocation) {
+                                  setNewLocation({ name: "", address: "" });
+                                  setShowNewLocation(false);
+                                } else {
+                                  setShowNewLocation(true);
+                                }
+                              }}
+                            >
+                              Add Location
+                            </button>
+                          </div>
+                        ) : showNewLocation ? (
+                          <div className="form-container">
+                            <h2>Add New Location</h2>
+                            <div className="form-row">
+                              <div className="form-group">
+                                <div className="input-wrapper">
+                                  <input
+                                    type="text"
+                                    placeholder="Address"
+                                    value={newLocation.address}
+                                    onChange={(e) =>
+                                      handleAddressChange(e.target.value)
+                                    }
+                                    className="form-input"
+                                  />
+                                </div>
+                              </div>
 
-                <div className="form-group">
-                  <div className="form-group">
-                    {!newProduct.photo && (
-                      <Dropzone
-                        heading="Photo"
-                        uploadType="photo"
-                        onUpload={(url: string) => {
-                          setNewProduct((prev) => ({
-                            ...prev,
-                            photo: url,
-                          }));
-                        }}
-                      />
-                    )}
-                    {newProduct.photo && (
-                      <div className="photo-preview">
-                        <img
-                          src={`http://localhost:5000${newProduct.photo}`}
-                          alt="Preview"
-                          style={{
-                            borderRadius: "15px",
-                            alignContent: "center",
-                            maxWidth: "300px",
-                            maxHeight: "300px",
-                            marginTop: "10px",
-                          }}
-                        />
+                              <div className="form-group">
+                                <div className="input-wrapper">
+                                  <input
+                                    type="text"
+                                    placeholder="Location name"
+                                    value={newLocation.name}
+                                    onChange={(e) =>
+                                      setNewLocation({
+                                        ...newLocation,
+                                        name: e.target.value,
+                                      })
+                                    }
+                                    className="form-input"
+                                  />
+                                  {extractedCoords && (
+                                    <div className="coordinates-display">
+                                      <small>
+                                        Coordinates extracted:{" "}
+                                        {extractedCoords.lat.toFixed(6)},{" "}
+                                        {extractedCoords.lng.toFixed(6)}
+                                      </small>
+                                    </div>
+                                  )}
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                        ) : (
+                          <>
+                            <div className="table-container">
+                              {renderLocationTable()}
+                            </div>
+                            <button
+                              className="secondary-btn"
+                              onClick={() => {
+                                if (showNewLocation) {
+                                  setNewLocation({ name: "", address: "" });
+                                  setShowNewLocation(false);
+                                } else {
+                                  setShowNewLocation(true);
+                                }
+                              }}
+                            >
+                              {showNewLocation
+                                ? "Cancel"
+                                : locations.length === 0
+                                  ? "Add Location"
+                                  : "Add Another Location"}
+                            </button>
+                          </>
+                        )}
+
+                        <div className="action-buttons">
+                          {showNewLocation && (
+                            <>
+                              <button
+                                className="primary-btn"
+                                onClick={handleAddLocation}
+                                disabled={
+                                  !newLocation.name || !newLocation.address
+                                }
+                              >
+                                Save Location
+                              </button>
+                              <button
+                                className="primary-btn"
+                                onClick={() => {
+                                  setNewLocation({ address: "", name: "" });
+                                  setShowNewLocation(false);
+                                }}
+                                style={{
+                                  backgroundColor:
+                                    newLocation.name && newLocation.address
+                                      ? "#f44336"
+                                      : "#45a049",
+                                }}
+                              >
+                                Cancel
+                              </button>
+                            </>
+                          )}
+                        </div>
                       </div>
                     )}
                   </div>
                 </div>
               </div>
             </div>
-          ) : (
-            <>
-              <div className="table-container">{renderProductTable()}</div>
-              <button
-                className="secondary-btn"
-                onClick={() => {
-                  if (showNewProduct) {
-                    setNewProduct({
-                      id: "",
-                      name: "",
-                      photo: "",
-                      quantity: "",
-                    });
-                    setShowNewProduct(false);
-                  } else {
-                    setShowNewProduct(true);
-                  }
-                }}
-              >
-                Add Product
-              </button>
-            </>
           )}
 
           <div className="action-buttons">
@@ -437,10 +688,10 @@ function App() {
               <>
                 <button
                   className="primary-btn"
-                  onClick={handleAddProduct}
+                  onClick={handleAddJourney}
                   disabled={!newProduct.name || !newProduct.quantity}
                 >
-                  Save Product
+                  Save Journey
                 </button>
                 <button
                   className="primary-btn"
@@ -451,125 +702,12 @@ function App() {
                         : "#45a049",
                   }}
                   onClick={() => {
-                    setNewProduct({
+                    setNewJourney({
                       id: "",
-                      name: "",
-                      photo: "",
-                      quantity: "",
+                      location: undefined,
+                      product: undefined,
                     });
-                    setShowNewProduct(false);
-                  }}
-                >
-                  Cancel
-                </button>
-              </>
-            )}
-          </div>
-        </div>
-
-        {/* Locations Panel */}
-        <div className="content-panel">
-          {!showNewLocation && locations.length === 0 ? (
-            <div className="empty-state">
-              <h2>There are no locations saved.</h2>
-              <button
-                className="secondary-btn"
-                onClick={() => {
-                  if (showNewLocation) {
-                    setNewLocation({ name: "", address: "" });
-                    setShowNewLocation(false);
-                  } else {
-                    setShowNewLocation(true);
-                  }
-                }}
-              >
-                Add Location
-              </button>
-            </div>
-          ) : showNewLocation ? (
-            <div className="form-container">
-              <h2>Add New Location</h2>
-              <div className="form-row">
-                <div className="form-group">
-                  <div className="input-wrapper">
-                    <input
-                      type="text"
-                      placeholder="Address"
-                      value={newLocation.address}
-                      onChange={(e) => handleAddressChange(e.target.value)}
-                      className="form-input"
-                    />
-                  </div>
-                </div>
-
-                <div className="form-group">
-                  <div className="input-wrapper">
-                    <input
-                      type="text"
-                      placeholder="Location name"
-                      value={newLocation.name}
-                      onChange={(e) =>
-                        setNewLocation({ ...newLocation, name: e.target.value })
-                      }
-                      className="form-input"
-                    />
-                    {extractedCoords && (
-                      <div className="coordinates-display">
-                        <small>
-                          Coordinates extracted:{" "}
-                          {extractedCoords.lat.toFixed(6)},{" "}
-                          {extractedCoords.lng.toFixed(6)}
-                        </small>
-                      </div>
-                    )}
-                  </div>
-                </div>
-              </div>
-            </div>
-          ) : (
-            <>
-              <div className="table-container">{renderLocationTable()}</div>
-              <button
-                className="secondary-btn"
-                onClick={() => {
-                  if (showNewLocation) {
-                    setNewLocation({ name: "", address: "" });
-                    setShowNewLocation(false);
-                  } else {
-                    setShowNewLocation(true);
-                  }
-                }}
-              >
-                {showNewLocation
-                  ? "Cancel"
-                  : locations.length === 0
-                    ? "Add Location"
-                    : "Add Another Location"}
-              </button>
-            </>
-          )}
-
-          <div className="action-buttons">
-            {showNewLocation && (
-              <>
-                <button
-                  className="primary-btn"
-                  onClick={handleAddLocation}
-                  disabled={!newLocation.name || !newLocation.address}
-                >
-                  Save Location
-                </button>
-                <button
-                  className="primary-btn"
-                  onClick={() => {
-                    setNewLocation({ address: "", name: "" });
-                    setShowNewLocation(false);
-                  }}
-                  style={{
-                    backgroundColor:
-                      newLocation.name && newLocation.address
-                        ? "#f44336"
-                        : "#45a049",
+                    setShowNewJourney(false);
                   }}
                 >
                   Cancel
