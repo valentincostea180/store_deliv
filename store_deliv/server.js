@@ -58,11 +58,14 @@ if (!fs.existsSync(dataDir)) {
 
 const productsPath = path.join(dataDir, "products.json");
 const locationsPath = path.join(dataDir, "location.json");
+const journeysPath = path.join(dataDir, "journey.json");
 
 if (!fs.existsSync(locationsPath))
   fs.writeFileSync(locationsPath, JSON.stringify([], null, 2));
 if (!fs.existsSync(productsPath))
-  fs.writeFileSync(productsPath, JSON.stringify([], null, 2)); 
+  fs.writeFileSync(productsPath, JSON.stringify([], null, 2));
+if (!fs.existsSync(journeysPath))
+  fs.writeFileSync(journeysPath, JSON.stringify([], null, 2)); 
 
 const readJSON = (filePath) => {
   try {
@@ -98,7 +101,16 @@ try {
 } catch(err) {
   res.status(500).json({error: "Failed to read the locations."  })
 }
-})
+});
+
+app.get("/api/journeys", (req, res) => {
+  try {
+    const journeys = readJSON(journeysPath);
+    res.json(journeys);
+  } catch (err) {
+    res.status(500).json({ error: "Failed to read the products." });
+  }
+});
 
 app.post("/api/products", (req, res) => {
   try {
@@ -126,6 +138,19 @@ app.post("/api/locations", (req, res) => {
   } catch (err) {
     console.error("Error adding location:", err);
     res.status(500).json({ error: "Failed to add location" });
+  }
+});
+
+app.post("/api/journeys", (req, res) => {
+  try {
+    const journeys = readJSON(journeysPath);
+    const newJourney = { id: Date.now().toString(), ...req.body };
+    journeys.push(newJourney);
+    writeJSON(journeysPath, journeys);
+    res.json(newJourney);
+  } catch (err) {
+    console.error("Error adding journey:", err);
+    res.status(500).json({ error: "Failed to add journey" });
   }
 });
 
@@ -208,6 +233,23 @@ app.delete("/api/locations/:id", (req, res) => {
     }
     
     writeJSON(locationsPath, filteredLocations);
+    res.json({ message: "Location deleted successfully." });
+  } catch (err) {
+    console.error("Error deleting Location:", err);
+    res.status(500).json({ error: "Failed to delete Location." });
+  }
+});
+
+app.delete("/api/journeys/:id", (req, res) => {
+  try {
+    const journeys = readJSON(journeysPath);
+    const filteredJourneys = journeys.filter(journeys => journeys.id !== req.params.id);
+    
+    if (filteredJourneys.length === journeys.length) {
+      return res.status(404).json({ error: "Location not found." });
+    }
+    
+    writeJSON(journeysPath, filteredJourneys);
     res.json({ message: "Location deleted successfully." });
   } catch (err) {
     console.error("Error deleting Location:", err);

@@ -149,26 +149,24 @@ function App() {
     if (newJourney.product && newJourney.location) {
       const journeyId = Date.now().toString();
 
-      const productToSave: Product = {
+      const productToSave: Journey = {
         id: newProduct.id,
-        name: newProduct.name,
-        photo: newProduct.photo,
-        quantity: newProduct.quantity,
+        location: newJourney.location,
+        product: newJourney.product,
       };
 
-      fetch(`http://localhost:5000/api/products`, {
+      fetch(`http://localhost:5000/api/journeys`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(productToSave),
       })
         .then((res) => res.json())
-        .then((savedProduct) => {
-          setProducts((prev) => [savedProduct, ...prev].slice(0, 5));
-          setNewProduct({
+        .then((savedJourney) => {
+          setProducts((prev) => [savedJourney, ...prev].slice(0, 5));
+          setNewJourney({
             id: "",
-            photo: null,
-            name: "",
-            quantity: "",
+            location: undefined,
+            product: undefined,
           });
           setShowNewProduct(false);
         })
@@ -355,6 +353,7 @@ function App() {
       return `http://localhost:5000${photoPath}`;
     return `http://localhost:5000/uploads/${photoPath}`;
   };
+
   return (
     <div className="app-container">
       <div className="app-header">
@@ -376,9 +375,12 @@ function App() {
                       location: undefined,
                       product: undefined,
                     });
+
                     setShowNewJourney(false);
                   } else {
                     setShowNewJourney(true);
+                    setShowProductModal(true);
+                    setShowLocationModal(true);
                   }
                 }}
               >
@@ -684,12 +686,12 @@ function App() {
           )}
 
           <div className="action-buttons">
-            {showNewProduct && (
+            {showNewJourney && (
               <>
                 <button
                   className="primary-btn"
                   onClick={handleAddJourney}
-                  disabled={!newProduct.name || !newProduct.quantity}
+                  disabled={!newJourney.product || !newJourney.location}
                 >
                   Save Journey
                 </button>
@@ -697,7 +699,7 @@ function App() {
                   className="primary-btn"
                   style={{
                     backgroundColor:
-                      newProduct.name && newProduct.quantity
+                      newJourney.product && newJourney.location
                         ? "#f44336"
                         : "#45a049",
                   }}
