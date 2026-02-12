@@ -386,8 +386,8 @@ function App() {
                     setShowNewJourney(false);
                   } else {
                     setShowNewJourney(true);
-                    setShowProductModal(true);
-                    setShowLocationModal(true);
+                    setShowProductModal(false);
+                    setShowLocationModal(false);
                   }
                 }}
               >
@@ -398,6 +398,13 @@ function App() {
             <div className="form-container">
               <h2>Add New Journey</h2>
               <div className="form-row">
+                <button onClick={() => setShowProductModal(true)}>
+                  {newJourney.product?.name || "Select Product"}
+                </button>
+
+                <button onClick={() => setShowLocationModal(true)}>
+                  {newJourney.location?.name || "Select Location"}
+                </button>
                 <div className="form-group">
                   <div className="input-wrapper">
                     {/* Products Modal */}
