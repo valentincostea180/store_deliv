@@ -41,6 +41,13 @@ function App() {
       .catch((error) => console.error("Error loading locations:", error));
   }, []);
 
+  useEffect(() => {
+    fetch(`http://localhost:5000/api/journeys`)
+      .then((response) => response.json())
+      .then((data) => setJourneys(data))
+      .catch((error) => console.error("Error loading journeys:", error));
+  }, []);
+
   const [showProductModal, setShowProductModal] = useState(false);
   const [showLocationModal, setShowLocationModal] = useState(false);
 
