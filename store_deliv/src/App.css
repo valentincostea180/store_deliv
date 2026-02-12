@@ -71,6 +71,12 @@ body {
   color: var(--text-light);
 }
 
+.form-journey {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+}
+
 .form-container {
   flex-grow: 1;
 }
@@ -164,6 +170,19 @@ body {
   justify-content: space-between;
   gap: 0.5rem;
   padding-top: 1rem;
+}
+
+.modal-btn {
+  padding: 102px 204px;
+  border: none;
+  border-radius: 6px;
+  font-size: 16px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s;
+  background-color: transparent;
+  color: var(--secondary-color);
+  border: 1px solid var(--secondary-color);
 }
 
 .primary-btn,

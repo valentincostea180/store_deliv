@@ -50,6 +50,7 @@ function App() {
 
   const [showProductModal, setShowProductModal] = useState(false);
   const [showLocationModal, setShowLocationModal] = useState(false);
+  const [showJourneyModal, setShowJourneyModal] = useState(false);
 
   const [showNewProduct, setShowNewProduct] = useState(false);
   const [showNewLocation, setShowNewLocation] = useState(false);
@@ -156,8 +157,8 @@ function App() {
     if (newJourney.product && newJourney.location) {
       const journeyId = Date.now().toString();
 
-      const productToSave: Journey = {
-        id: newProduct.id,
+      const journeyToSave: Journey = {
+        id: journeyId,
         location: newJourney.location,
         product: newJourney.product,
       };
@@ -165,20 +166,20 @@ function App() {
       fetch(`http://localhost:5000/api/journeys`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(productToSave),
+        body: JSON.stringify(journeyToSave),
       })
         .then((res) => res.json())
         .then((savedJourney) => {
-          setProducts((prev) => [savedJourney, ...prev].slice(0, 5));
+          setJourneys((prev) => [savedJourney, ...prev].slice(0, 5));
           setNewJourney({
             id: "",
             location: undefined,
             product: undefined,
           });
-          setShowNewProduct(false);
+          setShowNewJourney(false);
         })
         .catch((error) => {
-          console.error("Error saving product:", error);
+          console.error("Error saving journey:", error);
         });
     }
   };
@@ -388,6 +389,7 @@ function App() {
                     setShowNewJourney(true);
                     setShowProductModal(false);
                     setShowLocationModal(false);
+                    setShowJourneyModal(true);
                   }
                 }}
               >
@@ -396,340 +398,392 @@ function App() {
             </div>
           ) : (
             <div className="form-container">
-              <h2>Add New Journey</h2>
-              <div className="form-row">
-                <button onClick={() => setShowProductModal(true)}>
-                  {newJourney.product?.name || "Select Product"}
-                </button>
+              {/* */}
+              {showJourneyModal && (
+                <>
+                  {" "}
+                  <h2>Add New Journey</h2>
+                  <div className="form-row">
+                    <div className="form-journey">
+                      <button
+                        className="modal-btn"
+                        onClick={() => {
+                          setShowProductModal(true);
+                          setShowJourneyModal(false);
+                        }}
+                      >
+                        Select Product
+                      </button>
 
-                <button onClick={() => setShowLocationModal(true)}>
-                  {newJourney.location?.name || "Select Location"}
-                </button>
-                <div className="form-group">
-                  <div className="input-wrapper">
-                    {/* Products Modal */}
-                    {showProductModal && (
-                      <div className="content-panel">
-                        {!showNewProduct && products.length === 0 ? (
-                          <div className="empty-state">
-                            <h2>There are no deliverables saved.</h2>
-                            <button
-                              className="secondary-btn"
-                              onClick={() => {
-                                if (showNewProduct) {
-                                  setNewProduct({
-                                    id: "",
-                                    name: "",
-                                    photo: "",
-                                    quantity: "",
-                                  });
-                                  setShowNewProduct(false);
-                                } else {
-                                  setShowNewProduct(true);
-                                }
-                              }}
-                            >
-                              {showNewProduct ? "Cancel" : "Add Product"}
-                            </button>
-                          </div>
-                        ) : showNewProduct ? (
-                          <div className="form-container">
-                            <h2>Add New Deliverable</h2>
-                            <div className="form-row">
-                              <div className="form-group">
-                                <div className="input-wrapper">
-                                  <input
-                                    type="text"
-                                    placeholder="Product name"
-                                    value={newProduct.name}
-                                    onChange={(e) =>
-                                      setNewProduct({
-                                        ...newProduct,
-                                        name: e.target.value,
-                                      })
-                                    }
-                                    className="form-input"
-                                  />
-                                </div>
-                              </div>
-
-                              <div className="form-group">
-                                <div className="input-wrapper">
-                                  <input
-                                    type="text"
-                                    placeholder="Quantity"
-                                    value={newProduct.quantity}
-                                    onChange={(e) =>
-                                      setNewProduct({
-                                        ...newProduct,
-                                        quantity: e.target.value,
-                                      })
-                                    }
-                                    className="form-input"
-                                  />
-                                </div>
-                              </div>
-
-                              <div className="form-group">
-                                <div className="form-group">
-                                  {!newProduct.photo && (
-                                    <Dropzone
-                                      heading="Photo"
-                                      uploadType="photo"
-                                      onUpload={(url: string) => {
-                                        setNewProduct((prev) => ({
-                                          ...prev,
-                                          photo: url,
-                                        }));
-                                      }}
-                                    />
-                                  )}
-                                  {newProduct.photo && (
-                                    <div className="photo-preview">
-                                      <img
-                                        src={`http://localhost:5000${newProduct.photo}`}
-                                        alt="Preview"
-                                        style={{
-                                          borderRadius: "15px",
-                                          alignContent: "center",
-                                          maxWidth: "300px",
-                                          maxHeight: "300px",
-                                          marginTop: "10px",
-                                        }}
-                                      />
-                                    </div>
-                                  )}
-                                </div>
-                              </div>
-                            </div>
-                          </div>
-                        ) : (
-                          <>
-                            <div className="table-container">
-                              {renderProductTable()}
-                            </div>
-                            <button
-                              className="secondary-btn"
-                              onClick={() => {
-                                if (showNewProduct) {
-                                  setNewProduct({
-                                    id: "",
-                                    name: "",
-                                    photo: "",
-                                    quantity: "",
-                                  });
-                                  setShowNewProduct(false);
-                                } else {
-                                  setShowNewProduct(true);
-                                }
-                              }}
-                            >
-                              Add Product
-                            </button>
-                          </>
-                        )}
-
-                        <div className="action-buttons">
-                          {showNewProduct && (
-                            <>
-                              <button
-                                className="primary-btn"
-                                onClick={handleAddProduct}
-                                disabled={
-                                  !newProduct.name || !newProduct.quantity
-                                }
-                              >
-                                Save Product
-                              </button>
-                              <button
-                                className="primary-btn"
-                                style={{
-                                  backgroundColor:
-                                    newProduct.name && newProduct.quantity
-                                      ? "#f44336"
-                                      : "#45a049",
-                                }}
-                                onClick={() => {
-                                  setNewProduct({
-                                    id: "",
-                                    name: "",
-                                    photo: "",
-                                    quantity: "",
-                                  });
-                                  setShowNewProduct(false);
-                                }}
-                              >
-                                Cancel
-                              </button>
-                            </>
-                          )}
-                        </div>
-                      </div>
+                      <button
+                        className="modal-btn"
+                        onClick={() => {
+                          setShowLocationModal(true);
+                          setShowJourneyModal(false);
+                        }}
+                      >
+                        Select Location
+                      </button>
+                    </div>
+                  </div>
+                  <div className="action-buttons">
+                    {showNewJourney && (
+                      <>
+                        <button
+                          className="primary-btn"
+                          onClick={handleAddJourney}
+                          disabled={!newJourney.product || !newJourney.location}
+                        >
+                          Save Journey
+                        </button>
+                        <button
+                          className="primary-btn"
+                          style={{
+                            backgroundColor:
+                              newJourney.product && newJourney.location
+                                ? "#f44336"
+                                : "#45a049",
+                          }}
+                          onClick={() => {
+                            setNewJourney({
+                              id: "",
+                              location: undefined,
+                              product: undefined,
+                            });
+                            setShowNewJourney(false);
+                          }}
+                        >
+                          Cancel
+                        </button>
+                      </>
                     )}
                   </div>
-                </div>
-
-                <div className="form-group">
-                  <div className="input-wrapper">
-                    {/* Locations Modal */}
-                    {showLocationModal && (
-                      <div className="content-panel">
-                        {!showNewLocation && locations.length === 0 ? (
-                          <div className="empty-state">
-                            <h2>There are no locations saved.</h2>
-                            <button
-                              className="secondary-btn"
-                              onClick={() => {
-                                if (showNewLocation) {
-                                  setNewLocation({ name: "", address: "" });
-                                  setShowNewLocation(false);
-                                } else {
-                                  setShowNewLocation(true);
-                                }
-                              }}
-                            >
-                              Add Location
-                            </button>
-                          </div>
-                        ) : showNewLocation ? (
-                          <div className="form-container">
-                            <h2>Add New Location</h2>
-                            <div className="form-row">
-                              <div className="form-group">
-                                <div className="input-wrapper">
-                                  <input
-                                    type="text"
-                                    placeholder="Address"
-                                    value={newLocation.address}
-                                    onChange={(e) =>
-                                      handleAddressChange(e.target.value)
-                                    }
-                                    className="form-input"
-                                  />
-                                </div>
-                              </div>
-
-                              <div className="form-group">
-                                <div className="input-wrapper">
-                                  <input
-                                    type="text"
-                                    placeholder="Location name"
-                                    value={newLocation.name}
-                                    onChange={(e) =>
-                                      setNewLocation({
-                                        ...newLocation,
-                                        name: e.target.value,
-                                      })
-                                    }
-                                    className="form-input"
-                                  />
-                                  {extractedCoords && (
-                                    <div className="coordinates-display">
-                                      <small>
-                                        Coordinates extracted:{" "}
-                                        {extractedCoords.lat.toFixed(6)},{" "}
-                                        {extractedCoords.lng.toFixed(6)}
-                                      </small>
-                                    </div>
-                                  )}
-                                </div>
-                              </div>
-                            </div>
-                          </div>
-                        ) : (
-                          <>
-                            <div className="table-container">
-                              {renderLocationTable()}
-                            </div>
-                            <button
-                              className="secondary-btn"
-                              onClick={() => {
-                                if (showNewLocation) {
-                                  setNewLocation({ name: "", address: "" });
-                                  setShowNewLocation(false);
-                                } else {
-                                  setShowNewLocation(true);
-                                }
-                              }}
-                            >
-                              {showNewLocation
-                                ? "Cancel"
-                                : locations.length === 0
-                                  ? "Add Location"
-                                  : "Add Another Location"}
-                            </button>
-                          </>
-                        )}
-
-                        <div className="action-buttons">
-                          {showNewLocation && (
-                            <>
-                              <button
-                                className="primary-btn"
-                                onClick={handleAddLocation}
-                                disabled={
-                                  !newLocation.name || !newLocation.address
-                                }
-                              >
-                                Save Location
-                              </button>
-                              <button
-                                className="primary-btn"
-                                onClick={() => {
-                                  setNewLocation({ address: "", name: "" });
-                                  setShowNewLocation(false);
-                                }}
-                                style={{
-                                  backgroundColor:
-                                    newLocation.name && newLocation.address
-                                      ? "#f44336"
-                                      : "#45a049",
-                                }}
-                              >
-                                Cancel
-                              </button>
-                            </>
-                          )}
-                        </div>
-                      </div>
-                    )}
-                  </div>
-                </div>
-              </div>
+                </>
+              )}
             </div>
           )}
 
-          <div className="action-buttons">
-            {showNewJourney && (
-              <>
-                <button
-                  className="primary-btn"
-                  onClick={handleAddJourney}
-                  disabled={!newJourney.product || !newJourney.location}
-                >
-                  Save Journey
-                </button>
-                <button
-                  className="primary-btn"
-                  style={{
-                    backgroundColor:
-                      newJourney.product && newJourney.location
-                        ? "#f44336"
-                        : "#45a049",
-                  }}
-                  onClick={() => {
-                    setNewJourney({
-                      id: "",
-                      location: undefined,
-                      product: undefined,
-                    });
-                    setShowNewJourney(false);
-                  }}
-                >
-                  Cancel
-                </button>
-              </>
-            )}
+          <div className="form-container">
+            <div className="input-wrapper">
+              {/* Products Modal */}
+              {showProductModal && (
+                <div className="content-panel">
+                  {!showNewProduct && products.length === 0 ? (
+                    <div className="empty-state">
+                      <h2>There are no deliverables saved.</h2>
+                      <button
+                        className="secondary-btn"
+                        onClick={() => {
+                          if (showNewProduct) {
+                            setNewProduct({
+                              id: "",
+                              name: "",
+                              photo: "",
+                              quantity: "",
+                            });
+                            setShowNewProduct(false);
+                          } else {
+                            setShowNewProduct(true);
+                          }
+                        }}
+                      >
+                        {showNewProduct ? "Cancel" : "Add Product"}
+                      </button>
+                      <button
+                        className="secondary-btn"
+                        onClick={() => {
+                          setShowProductModal(false);
+                          setShowJourneyModal(true);
+                        }}
+                      >
+                        Back
+                      </button>
+                    </div>
+                  ) : showNewProduct ? (
+                    <div className="form-container">
+                      <h2>Add New Deliverable</h2>
+                      <div className="form-row">
+                        <div className="form-group">
+                          <div className="input-wrapper">
+                            <input
+                              type="text"
+                              placeholder="Product name"
+                              value={newProduct.name}
+                              onChange={(e) =>
+                                setNewProduct({
+                                  ...newProduct,
+                                  name: e.target.value,
+                                })
+                              }
+                              className="form-input"
+                            />
+                          </div>
+                        </div>
+
+                        <div className="form-group">
+                          <div className="input-wrapper">
+                            <input
+                              type="text"
+                              placeholder="Quantity"
+                              value={newProduct.quantity}
+                              onChange={(e) =>
+                                setNewProduct({
+                                  ...newProduct,
+                                  quantity: e.target.value,
+                                })
+                              }
+                              className="form-input"
+                            />
+                          </div>
+                        </div>
+
+                        <div className="form-group">
+                          <div className="form-group">
+                            {!newProduct.photo && (
+                              <Dropzone
+                                heading="Photo"
+                                uploadType="photo"
+                                onUpload={(url: string) => {
+                                  setNewProduct((prev) => ({
+                                    ...prev,
+                                    photo: url,
+                                  }));
+                                }}
+                              />
+                            )}
+                            {newProduct.photo && (
+                              <div className="photo-preview">
+                                <img
+                                  src={`http://localhost:5000${newProduct.photo}`}
+                                  alt="Preview"
+                                  style={{
+                                    borderRadius: "15px",
+                                    alignContent: "center",
+                                    maxWidth: "300px",
+                                    maxHeight: "300px",
+                                    marginTop: "10px",
+                                  }}
+                                />
+                              </div>
+                            )}
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  ) : (
+                    <>
+                      <div className="table-container">
+                        {renderProductTable()}
+                      </div>
+                      <button
+                        className="secondary-btn"
+                        onClick={() => {
+                          if (showNewProduct) {
+                            setNewProduct({
+                              id: "",
+                              name: "",
+                              photo: "",
+                              quantity: "",
+                            });
+                            setShowNewProduct(false);
+                          } else {
+                            setShowNewProduct(true);
+                          }
+                        }}
+                      >
+                        Add Product
+                      </button>
+                      <button
+                        className="secondary-btn"
+                        onClick={() => {
+                          setShowProductModal(false);
+                          setShowJourneyModal(true);
+                        }}
+                      >
+                        Back
+                      </button>
+                    </>
+                  )}
+
+                  <div className="action-buttons">
+                    {showNewProduct && (
+                      <>
+                        <button
+                          className="primary-btn"
+                          onClick={handleAddProduct}
+                          disabled={!newProduct.name || !newProduct.quantity}
+                        >
+                          Save Product
+                        </button>
+                        <button
+                          className="primary-btn"
+                          style={{
+                            backgroundColor:
+                              newProduct.name && newProduct.quantity
+                                ? "#f44336"
+                                : "#45a049",
+                          }}
+                          onClick={() => {
+                            setNewProduct({
+                              id: "",
+                              name: "",
+                              photo: "",
+                              quantity: "",
+                            });
+                            setShowNewProduct(false);
+                          }}
+                        >
+                          Cancel
+                        </button>
+                      </>
+                    )}
+                  </div>
+                </div>
+              )}
+            </div>
+          </div>
+
+          <div className="form-container">
+            <div className="input-wrapper">
+              {/* Locations Modal */}
+              {showLocationModal && (
+                <div className="content-panel">
+                  {!showNewLocation && locations.length === 0 ? (
+                    <div className="empty-state">
+                      <h2>There are no locations saved.</h2>
+                      <button
+                        className="secondary-btn"
+                        onClick={() => {
+                          if (showNewLocation) {
+                            setNewLocation({ name: "", address: "" });
+                            setShowNewLocation(false);
+                          } else {
+                            setShowNewLocation(true);
+                          }
+                        }}
+                      >
+                        Add Location
+                      </button>
+                      <button
+                        className="secondary-btn"
+                        onClick={() => {
+                          setShowLocationModal(false);
+                          setShowJourneyModal(true);
+                        }}
+                      >
+                        Back
+                      </button>
+                    </div>
+                  ) : showNewLocation ? (
+                    <div className="form-container">
+                      <h2>Add New Location</h2>
+                      <div className="form-row">
+                        <div className="form-group">
+                          <div className="input-wrapper">
+                            <input
+                              type="text"
+                              placeholder="Address"
+                              value={newLocation.address}
+                              onChange={(e) =>
+                                handleAddressChange(e.target.value)
+                              }
+                              className="form-input"
+                            />
+                          </div>
+                        </div>
+
+                        <div className="form-group">
+                          <div className="input-wrapper">
+                            <input
+                              type="text"
+                              placeholder="Location name"
+                              value={newLocation.name}
+                              onChange={(e) =>
+                                setNewLocation({
+                                  ...newLocation,
+                                  name: e.target.value,
+                                })
+                              }
+                              className="form-input"
+                            />
+                            {extractedCoords && (
+                              <div className="coordinates-display">
+                                <small>
+                                  Coordinates extracted:{" "}
+                                  {extractedCoords.lat.toFixed(6)},{" "}
+                                  {extractedCoords.lng.toFixed(6)}
+                                </small>
+                              </div>
+                            )}
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  ) : (
+                    <>
+                      <div className="table-container">
+                        {renderLocationTable()}
+                      </div>
+                      <button
+                        className="secondary-btn"
+                        onClick={() => {
+                          if (showNewLocation) {
+                            setNewLocation({ name: "", address: "" });
+                            setShowNewLocation(false);
+                          } else {
+                            setShowNewLocation(true);
+                          }
+                        }}
+                      >
+                        {showNewLocation
+                          ? "Cancel"
+                          : locations.length === 0
+                            ? "Add Location"
+                            : "Add Another Location"}
+                      </button>
+                      <button
+                        className="secondary-btn"
+                        onClick={() => {
+                          setShowLocationModal(false);
+                          setShowJourneyModal(true);
+                        }}
+                      >
+                        Back
+                      </button>
+                    </>
+                  )}
+
+                  <div className="action-buttons">
+                    {showNewLocation && (
+                      <>
+                        <button
+                          className="primary-btn"
+                          onClick={handleAddLocation}
+                          disabled={!newLocation.name || !newLocation.address}
+                        >
+                          Save Location
+                        </button>
+                        <button
+                          className="primary-btn"
+                          onClick={() => {
+                            setNewLocation({ address: "", name: "" });
+                            setShowNewLocation(false);
+                          }}
+                          style={{
+                            backgroundColor:
+                              newLocation.name && newLocation.address
+                                ? "#f44336"
+                                : "#45a049",
+                          }}
+                        >
+                          Cancel
+                        </button>
+                      </>
+                    )}
+                  </div>
+                </div>
+              )}
+            </div>
           </div>
         </div>
       </div>
