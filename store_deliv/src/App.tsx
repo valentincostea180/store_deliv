@@ -26,6 +26,25 @@ interface Journey {
   product: Product;
 }
 
+interface JourneyItem {
+  productId: string;
+  quantity: string;
+}
+
+interface JourneyStop {
+  locationId: string;
+  items: JourneyItem[];
+}
+
+/*
+  interface Journey {
+    id: string;
+    name?: string; 
+    date?: string; 
+    stops: JourneyStop[]; 
+  }
+*/
+
 function App() {
   useEffect(() => {
     fetch(`http://localhost:5000/api/products`)
