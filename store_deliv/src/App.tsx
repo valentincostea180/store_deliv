@@ -7,7 +7,6 @@ interface Product {
   id: string;
   name: string;
   photo: string | null;
-  quantity: string;
 }
 
 interface Location {
@@ -20,30 +19,23 @@ interface Location {
   };
 }
 
-interface Journey {
-  id: string;
-  location: Location;
-  product: Product;
-}
-
 interface JourneyItem {
   productId: string;
+  productName: string; // Denormalized for display
   quantity: string;
 }
 
 interface JourneyStop {
-  locationId: string;
+  location: Location; // Full location object for the stop
   items: JourneyItem[];
 }
 
-/*
-  interface Journey {
-    id: string;
-    name?: string; 
-    date?: string; 
-    stops: JourneyStop[]; 
-  }
-*/
+interface Journey {
+  id: string;
+  name: string;
+  date: string;
+  stops: JourneyStop[];
+}
 
 function App() {
   useEffect(() => {
@@ -79,6 +71,24 @@ function App() {
   const [locations, setLocations] = useState<Location[]>([]);
   const [journeys, setJourneys] = useState<Journey[]>([]);
 
+  const [currentJourney, setCurrentJourney] = useState<Partial<Journey>>({
+    id: "",
+    name: "",
+    date: new Date().toISOString().split("T")[0],
+    stops: [],
+  });
+
+  const [currentStop, setCurrentStop] = useState<Partial<JourneyStop>>({
+    location: undefined,
+    items: [],
+  });
+
+  const [currentItem, setCurrentItem] = useState<Partial<JourneyItem>>({
+    productId: "",
+    productName: "",
+    quantity: "",
+  });
+
   const [extractedCoords, setExtractedCoords] = useState<{
     lat: number;
     lng: number;
@@ -88,27 +98,24 @@ function App() {
     id: "",
     photo: null,
     name: "",
-    quantity: "",
   });
   const [newLocation, setNewLocation] = useState({
     name: "",
     address: "",
   });
-  const [newJourney, setNewJourney] = useState<Partial<Journey>>({
-    id: "",
-    location: undefined,
-    product: undefined,
-  });
+
+  {
+    /* product functions */
+  }
 
   const handleAddProduct = () => {
-    if (newProduct.name && newProduct.quantity) {
+    if (newProduct.name) {
       const productId = Date.now().toString();
 
       const productToSave: Product = {
         id: productId,
         name: newProduct.name,
         photo: newProduct.photo,
-        quantity: newProduct.quantity,
       };
 
       fetch(`http://localhost:5000/api/products`, {
@@ -123,82 +130,11 @@ function App() {
             id: "",
             photo: null,
             name: "",
-            quantity: "",
           });
           setShowNewProduct(false);
         })
         .catch((error) => {
           console.error("Error saving product:", error);
-        });
-    }
-  };
-  const handleAddLocation = async () => {
-    if (newLocation.name && newLocation.address) {
-      let coordinates = null;
-      try {
-        const result = await extractCoordinatesFromGoogleMapsUrl(
-          newLocation.address,
-        );
-        if (result.success) {
-          coordinates = { lat: result.lat, lng: result.lng };
-        }
-
-        const location: Location = {
-          id: Date.now().toString(),
-          name: newLocation.name,
-          address: newLocation.address,
-          ...(coordinates && { coordinates }),
-        };
-
-        fetch(`http://localhost:5000/api/locations`, {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(location),
-        })
-          .then((res) => res.json())
-          .then((savedLocation) => {
-            setLocations((prev) => [savedLocation, ...prev]);
-            setNewLocation({ name: "", address: "" });
-            setShowNewLocation(false);
-            setExtractedCoords(null);
-          })
-          .catch((error) => {
-            console.error("Error saving location:", error);
-            alert("Failed to save location");
-          });
-      } catch (error) {
-        console.error("Error extracting coordinates:", error);
-        setExtractedCoords(null);
-      }
-    }
-  };
-  const handleAddJourney = () => {
-    if (newJourney.product && newJourney.location) {
-      const journeyId = Date.now().toString();
-
-      const journeyToSave: Journey = {
-        id: journeyId,
-        location: newJourney.location,
-        product: newJourney.product,
-      };
-
-      fetch(`http://localhost:5000/api/journeys`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(journeyToSave),
-      })
-        .then((res) => res.json())
-        .then((savedJourney) => {
-          setJourneys((prev) => [savedJourney, ...prev].slice(0, 5));
-          setNewJourney({
-            id: "",
-            location: undefined,
-            product: undefined,
-          });
-          setShowNewJourney(false);
-        })
-        .catch((error) => {
-          console.error("Error saving journey:", error);
         });
     }
   };
@@ -227,24 +163,6 @@ function App() {
     } catch (err) {
       console.error(err);
       alert("Eroare la eliminarea produsului de pe server.");
-    }
-  };
-
-  const handleRemoveLocation = (id: string) => {
-    const confirmDelete = window.confirm(
-      "Are you sure you want to delete this prducts?",
-    );
-    if (!confirmDelete) return;
-
-    try {
-      fetch(`http://localhost:5000/api/locations/${id}`, {
-        method: "DELETE",
-      });
-
-      setLocations(locations.filter((location) => location.id !== id));
-    } catch (err) {
-      console.error(err);
-      alert("Eroare la eliminarea locatiei de pe server.");
     }
   };
 
@@ -301,6 +219,77 @@ function App() {
         </tbody>
       </table>
     );
+  };
+
+  const getFullPhotoUrl = (photoPath: string | null): string | undefined => {
+    if (!photoPath) return undefined;
+    if (photoPath.startsWith("http")) return photoPath;
+    if (photoPath.startsWith("/uploads"))
+      return `http://localhost:5000${photoPath}`;
+    return `http://localhost:5000/uploads/${photoPath}`;
+  };
+
+  {
+    /* location functions */
+  }
+
+  const handleAddLocation = async () => {
+    if (newLocation.name && newLocation.address) {
+      let coordinates = null;
+      try {
+        const result = await extractCoordinatesFromGoogleMapsUrl(
+          newLocation.address,
+        );
+        if (result.success) {
+          coordinates = { lat: result.lat, lng: result.lng };
+        }
+
+        const location: Location = {
+          id: Date.now().toString(),
+          name: newLocation.name,
+          address: newLocation.address,
+          ...(coordinates && { coordinates }),
+        };
+
+        fetch(`http://localhost:5000/api/locations`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(location),
+        })
+          .then((res) => res.json())
+          .then((savedLocation) => {
+            setLocations((prev) => [savedLocation, ...prev]);
+            setNewLocation({ name: "", address: "" });
+            setShowNewLocation(false);
+            setExtractedCoords(null);
+          })
+          .catch((error) => {
+            console.error("Error saving location:", error);
+            alert("Failed to save location");
+          });
+      } catch (error) {
+        console.error("Error extracting coordinates:", error);
+        setExtractedCoords(null);
+      }
+    }
+  };
+
+  const handleRemoveLocation = (id: string) => {
+    const confirmDelete = window.confirm(
+      "Are you sure you want to delete this prducts?",
+    );
+    if (!confirmDelete) return;
+
+    try {
+      fetch(`http://localhost:5000/api/locations/${id}`, {
+        method: "DELETE",
+      });
+
+      setLocations(locations.filter((location) => location.id !== id));
+    } catch (err) {
+      console.error(err);
+      alert("Eroare la eliminarea locatiei de pe server.");
+    }
   };
 
   const renderLocationTable = () => {
@@ -373,13 +362,138 @@ function App() {
     }
   };
 
-  const getFullPhotoUrl = (photoPath: string | null): string | undefined => {
-    if (!photoPath) return undefined;
-    if (photoPath.startsWith("http")) return photoPath;
-    if (photoPath.startsWith("/uploads"))
-      return `http://localhost:5000${photoPath}`;
-    return `http://localhost:5000/uploads/${photoPath}`;
+  {
+    /* journey functions */
+  }
+
+  const startNewJourney = () => {
+    setCurrentJourney({
+      id: "",
+      name: "",
+      date: new Date().toISOString().split("T")[0],
+      stops: [],
+    });
+    setCurrentStop({
+      location: undefined,
+      items: [],
+    });
+    setCurrentItem({
+      productId: "",
+      productName: "",
+      quantity: "",
+    });
+    setShowJourneyModal(true);
   };
+
+  const addLocationToStop = (location: Location) => {
+    setCurrentStop({
+      location,
+      items: currentStop.items || [],
+    });
+    setShowLocationModal(false);
+  };
+
+  const addProductToStop = (product: Product) => {
+    setCurrentItem({
+      productId: product.id,
+      productName: product.name,
+      quantity: "",
+    });
+  };
+
+  const addItemToCurrentStop = () => {
+    if (currentItem.productId && currentItem.quantity && currentStop.location) {
+      const newItem: JourneyItem = {
+        productId: currentItem.productId,
+        productName: currentItem.productName || "",
+        quantity: currentItem.quantity,
+      };
+
+      setCurrentStop({
+        ...currentStop,
+        items: [...(currentStop.items || []), newItem],
+      });
+
+      setCurrentItem({
+        productId: "",
+        productName: "",
+        quantity: "",
+      });
+
+      setShowProductModal(false);
+    }
+  };
+
+  const saveCurrentStop = () => {
+    if (currentStop.location && (currentStop.items?.length || 0) > 0) {
+      setCurrentJourney({
+        ...currentJourney,
+        stops: [...(currentJourney.stops || []), currentStop as JourneyStop],
+      });
+
+      setCurrentStop({
+        location: undefined,
+        items: [],
+      });
+    }
+  };
+
+  const saveJourney = () => {
+    if (currentJourney.name && (currentJourney.stops?.length || 0) > 0) {
+      const journeyToSave: Journey = {
+        id: Date.now().toString(),
+        name: currentJourney.name,
+        date: currentJourney.date || new Date().toISOString().split("T")[0],
+        stops: currentJourney.stops as JourneyStop[],
+      };
+
+      fetch(`http://localhost:5000/api/journeys`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(journeyToSave),
+      })
+        .then((res) => res.json())
+        .then((savedJourney) => {
+          setJourneys((prev) => [savedJourney, ...prev]);
+          setCurrentJourney({ id: "", name: "", date: "", stops: [] });
+          setShowJourneyModal(false);
+        })
+        .catch((error) => console.error("Error saving journey:", error));
+    }
+  };
+
+  {
+    /* const handleAddJourney = () => {
+    if (newJourney.product && newJourney.location) {
+      const journeyId = Date.now().toString();
+
+      const journeyToSave: Journey = {
+        id: journeyId,
+        location: newJourney.location,
+        product: newJourney.product,
+      };
+
+      fetch(`http://localhost:5000/api/journeys`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(journeyToSave),
+      })
+        .then((res) => res.json())
+        .then((savedJourney) => {
+          setJourneys((prev) => [savedJourney, ...prev].slice(0, 5));
+          setNewJourney({
+            id: "",
+            location: undefined,
+            product: undefined,
+          });
+          setShowNewJourney(false);
+        })
+        .catch((error) => {
+          console.error("Error saving journey:", error);
+        });
+    }
+  };*/
+  }
 
   return (
     <div className="app-container">
