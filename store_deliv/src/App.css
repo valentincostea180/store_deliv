@@ -295,6 +295,10 @@ table tr:last-child td:last-child {
   border: none;
 }
 
+.journeys-list h2 {
+  text-align: center;
+}
+
 /* Responsive */
 @media (max-width: 480px) {
   .app-container {

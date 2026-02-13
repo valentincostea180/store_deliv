@@ -21,12 +21,12 @@ interface Location {
 
 interface JourneyItem {
   productId: string;
-  productName: string; // Denormalized for display
+  productName: string;
   quantity: string;
 }
 
 interface JourneyStop {
-  location: Location; // Full location object for the stop
+  location: Location;
   items: JourneyItem[];
 }
 
@@ -65,7 +65,6 @@ function App() {
 
   const [showNewProduct, setShowNewProduct] = useState(false);
   const [showNewLocation, setShowNewLocation] = useState(false);
-  const [showNewJourney, setShowNewJourney] = useState(false);
 
   const [products, setProducts] = useState<Product[]>([]);
   const [locations, setLocations] = useState<Location[]>([]);
@@ -166,14 +165,17 @@ function App() {
     }
   };
 
-  const renderProductTable = () => {
+  const renderProductTable = (
+    selectable = false,
+    onSelect?: (product: Product) => void,
+  ) => {
     return (
       <table className="data-table">
         <thead>
           <tr>
             <th>Photo</th>
             <th>Name</th>
-            <th>Quantity</th>
+            {!selectable && <th>Actions</th>}
           </tr>
         </thead>
         <tbody>
@@ -181,10 +183,9 @@ function App() {
             products.map((product) => (
               <tr
                 key={product.id}
-                className="clickable-row"
-                onClick={() => handleRemoveProduct(product.id, product.photo)}
-                /* onClick={() => handleAddProductToJourney(product)} */
-                title="Click to remove this product"
+                className={selectable ? "clickable-row" : ""}
+                onClick={() => selectable && onSelect?.(product)}
+                title={selectable ? "Click to select this product" : ""}
               >
                 <td>
                   {product.photo ? (
@@ -197,16 +198,25 @@ function App() {
                         objectFit: "cover",
                         borderRadius: "4px",
                       }}
-                      onError={(e) => {
-                        e.currentTarget.style.display = "none";
-                      }}
                     />
                   ) : (
                     "-"
                   )}
                 </td>
                 <td>{product.name}</td>
-                <td>{product.quantity}</td>
+                {!selectable && (
+                  <td>
+                    <button
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        handleRemoveProduct(product.id, product.photo);
+                      }}
+                      className="delete-btn"
+                    >
+                      Delete
+                    </button>
+                  </td>
+                )}
               </tr>
             ))
           ) : (
@@ -292,13 +302,17 @@ function App() {
     }
   };
 
-  const renderLocationTable = () => {
+  const renderLocationTable = (
+    selectable = false,
+    onSelect?: (location: Location) => void,
+  ) => {
     return (
       <table className="data-table">
         <thead>
           <tr>
             <th>Name</th>
-            <th>Address</th>
+            <th>Address / Coordinates</th>
+            {!selectable && <th>Actions</th>}
           </tr>
         </thead>
         <tbody>
@@ -306,9 +320,9 @@ function App() {
             locations.map((location) => (
               <tr
                 key={location.id}
-                className="clickable-row"
-                onClick={() => handleRemoveLocation(location.id)}
-                title="Click to remove this location"
+                className={selectable ? "clickable-row" : ""}
+                onClick={() => selectable && onSelect?.(location)}
+                title={selectable ? "Click to select this location" : ""}
               >
                 <td>{location.name}</td>
                 <td>
@@ -316,11 +330,24 @@ function App() {
                     ? `${location.coordinates.lat.toFixed(6)}, ${location.coordinates.lng.toFixed(6)}`
                     : location.address}
                 </td>
+                {!selectable && (
+                  <td>
+                    <button
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        handleRemoveLocation(location.id);
+                      }}
+                      className="delete-btn"
+                    >
+                      Delete
+                    </button>
+                  </td>
+                )}
               </tr>
             ))
           ) : (
             <tr>
-              <td colSpan={2} className="no-data">
+              <td colSpan={3} className="no-data">
                 No locations saved.
               </td>
             </tr>
@@ -462,38 +489,213 @@ function App() {
     }
   };
 
-  {
-    /* const handleAddJourney = () => {
-    if (newJourney.product && newJourney.location) {
-      const journeyId = Date.now().toString();
+  const renderJourneyBuilder = () => {
+    return (
+      <div className="journey-builder">
+        <h2>Build Your Journey</h2>
 
-      const journeyToSave: Journey = {
-        id: journeyId,
-        location: newJourney.location,
-        product: newJourney.product,
-      };
+        {/* Journey Details */}
+        <div className="form-row">
+          <div className="form-group">
+            <input
+              type="text"
+              placeholder="Journey Name"
+              value={currentJourney.name || ""}
+              onChange={(e) =>
+                setCurrentJourney({ ...currentJourney, name: e.target.value })
+              }
+              className="form-input"
+            />
+          </div>
+          <div className="form-group">
+            <input
+              type="date"
+              value={currentJourney.date || ""}
+              onChange={(e) =>
+                setCurrentJourney({ ...currentJourney, date: e.target.value })
+              }
+              className="form-input"
+            />
+          </div>
+        </div>
 
-      fetch(`http://localhost:5000/api/journeys`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(journeyToSave),
-      })
-        .then((res) => res.json())
-        .then((savedJourney) => {
-          setJourneys((prev) => [savedJourney, ...prev].slice(0, 5));
-          setNewJourney({
-            id: "",
-            location: undefined,
-            product: undefined,
-          });
-          setShowNewJourney(false);
-        })
-        .catch((error) => {
-          console.error("Error saving journey:", error);
-        });
-    }
-  };*/
-  }
+        {/* Current Stop Builder */}
+        <div className="stop-builder">
+          <h3>Current Stop</h3>
+
+          {/* Location Selection */}
+          <div className="location-selection">
+            {currentStop.location ? (
+              <div className="selected-item">
+                <strong>Location:</strong> {currentStop.location.name}
+                <button
+                  onClick={() =>
+                    setCurrentStop({ ...currentStop, location: undefined })
+                  }
+                  className="small-btn"
+                >
+                  Change
+                </button>
+              </div>
+            ) : (
+              <button
+                className="secondary-btn"
+                onClick={() => {
+                  setShowLocationModal(true);
+                  setShowJourneyModal(false);
+                }}
+              >
+                Select Location
+              </button>
+            )}
+          </div>
+
+          {/* Items for current stop */}
+          {currentStop.location && (
+            <div className="items-section">
+              <h4>Products for this location</h4>
+
+              {/* Current item being added */}
+              <div className="add-item-form">
+                <button
+                  className="secondary-btn"
+                  onClick={() => setShowProductModal(true)}
+                  disabled={!!currentItem.productId}
+                >
+                  Select Product
+                </button>
+
+                {currentItem.productId && (
+                  <>
+                    <span className="selected-product">
+                      {currentItem.productName}
+                    </span>
+                    <input
+                      type="text"
+                      placeholder="Quantity"
+                      value={currentItem.quantity || ""}
+                      onChange={(e) =>
+                        setCurrentItem({
+                          ...currentItem,
+                          quantity: e.target.value,
+                        })
+                      }
+                      className="form-input quantity-input"
+                    />
+                    <button
+                      className="primary-btn"
+                      onClick={addItemToCurrentStop}
+                      disabled={!currentItem.quantity}
+                    >
+                      Add to Stop
+                    </button>
+                    <button
+                      className="small-btn"
+                      onClick={() =>
+                        setCurrentItem({
+                          productId: "",
+                          productName: "",
+                          quantity: "",
+                        })
+                      }
+                    >
+                      Cancel
+                    </button>
+                  </>
+                )}
+              </div>
+
+              {/* Items list for current stop */}
+              {currentStop.items && currentStop.items.length > 0 && (
+                <table className="items-table">
+                  <thead>
+                    <tr>
+                      <th>Product</th>
+                      <th>Quantity</th>
+                      <th>Action</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {currentStop.items.map((item, index) => (
+                      <tr key={index}>
+                        <td>{item.productName}</td>
+                        <td>{item.quantity}</td>
+                        <td>
+                          <button
+                            onClick={() => {
+                              const newItems = [...(currentStop.items || [])];
+                              newItems.splice(index, 1);
+                              setCurrentStop({
+                                ...currentStop,
+                                items: newItems,
+                              });
+                            }}
+                            className="delete-btn"
+                          >
+                            Remove
+                          </button>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              )}
+
+              {/* Save current stop button */}
+              {currentStop.items && currentStop.items.length > 0 && (
+                <button className="primary-btn" onClick={saveCurrentStop}>
+                  Save This Stop
+                </button>
+              )}
+            </div>
+          )}
+        </div>
+
+        {/* Journey Stops Summary */}
+        {currentJourney.stops && currentJourney.stops.length > 0 && (
+          <div className="journey-summary">
+            <h3>Journey Stops</h3>
+            {currentJourney.stops.map((stop, stopIndex) => (
+              <div key={stopIndex} className="stop-summary">
+                <h4>
+                  Stop {stopIndex + 1}: {stop.location.name}
+                </h4>
+                <ul>
+                  {stop.items.map((item, itemIndex) => (
+                    <li key={itemIndex}>
+                      {item.productName} - Quantity: {item.quantity}
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            ))}
+          </div>
+        )}
+
+        {/* Save Journey Button */}
+        <div className="action-buttons">
+          <button
+            className="primary-btn"
+            onClick={saveJourney}
+            disabled={
+              !currentJourney.name || (currentJourney.stops?.length || 0) === 0
+            }
+          >
+            Save Journey
+          </button>
+          <button
+            className="secondary-btn"
+            onClick={() => {
+              setShowJourneyModal(false);
+              setCurrentJourney({ id: "", name: "", date: "", stops: [] });
+            }}
+          >
+            Cancel
+          </button>
+        </div>
+      </div>
+    );
+  };
 
   return (
     <div className="app-container">
@@ -504,420 +706,313 @@ function App() {
       <div className="app-content">
         {/* Journey Panel */}
         <div className="content-panel">
-          {!showNewJourney && journeys.length === 0 ? (
+          {!showJourneyModal &&
+          !showLocationModal &&
+          !showProductModal &&
+          journeys.length === 0 ? (
             <div className="empty-state">
               <h2>There are no journeys saved.</h2>
-              <button
-                className="secondary-btn"
-                onClick={() => {
-                  if (showNewJourney) {
-                    setNewJourney({
-                      id: "",
-                      location: undefined,
-                      product: undefined,
-                    });
-
-                    setShowNewJourney(false);
-                  } else {
-                    setShowNewJourney(true);
-                    setShowProductModal(false);
-                    setShowLocationModal(false);
-                    setShowJourneyModal(true);
-                  }
-                }}
-              >
-                {showNewJourney ? "Cancel" : "Add Journey"}
+              <button className="secondary-btn" onClick={startNewJourney}>
+                Create New Journey
               </button>
             </div>
+          ) : showJourneyModal ? (
+            renderJourneyBuilder()
           ) : (
-            <div className="form-container">
-              {/* */}
-              {showJourneyModal && (
-                <>
-                  {" "}
-                  <h2>Add New Journey</h2>
-                  <div className="form-row">
-                    <div className="form-journey">
-                      <button
-                        className="modal-btn"
-                        onClick={() => {
-                          setShowProductModal(true);
-                          setShowJourneyModal(false);
-                        }}
-                      >
-                        Select Product
-                      </button>
+            !showLocationModal &&
+            !showProductModal && (
+              <div className="journeys-list">
+                <h2>Saved Journeys</h2>
+                {journeys.map((journey) => (
+                  <div key={journey.id} className="journey-card">
+                    <h3>{journey.name}</h3>
+                    <p>Date: {journey.date}</p>
+                    <p>Stops: {journey.stops.length}</p>
+                  </div>
+                ))}
+                <button className="secondary-btn" onClick={startNewJourney}>
+                  Create New Journey
+                </button>
+              </div>
+            )
+          )}
 
-                      <button
-                        className="modal-btn"
-                        onClick={() => {
-                          setShowLocationModal(true);
-                          setShowJourneyModal(false);
-                        }}
-                      >
-                        Select Location
-                      </button>
+          {/* Locations Modal */}
+          {showLocationModal && (
+            <div className="content-panel">
+              {!showNewLocation && locations.length === 0 ? (
+                <div className="empty-state">
+                  <h2>There are no locations saved.</h2>
+                  <button
+                    className="secondary-btn"
+                    onClick={() => {
+                      setShowNewLocation(true);
+                    }}
+                  >
+                    Add Location
+                  </button>
+                  <button
+                    className="secondary-btn"
+                    onClick={() => {
+                      setShowLocationModal(false);
+                      setShowJourneyModal(true);
+                    }}
+                  >
+                    Back
+                  </button>
+                </div>
+              ) : showNewLocation ? (
+                <div className="form-container">
+                  <h2>Add New Location</h2>
+                  <div className="form-row">
+                    <div className="form-group">
+                      <div className="input-wrapper">
+                        <input
+                          type="text"
+                          placeholder="Address"
+                          value={newLocation.address}
+                          onChange={(e) => handleAddressChange(e.target.value)}
+                          className="form-input"
+                        />
+                      </div>
+                    </div>
+
+                    <div className="form-group">
+                      <div className="input-wrapper">
+                        <input
+                          type="text"
+                          placeholder="Location name"
+                          value={newLocation.name}
+                          onChange={(e) =>
+                            setNewLocation({
+                              ...newLocation,
+                              name: e.target.value,
+                            })
+                          }
+                          className="form-input"
+                        />
+                        {extractedCoords && (
+                          <div className="coordinates-display">
+                            <small>
+                              Coordinates extracted:{" "}
+                              {extractedCoords.lat.toFixed(6)},{" "}
+                              {extractedCoords.lng.toFixed(6)}
+                            </small>
+                          </div>
+                        )}
+                      </div>
                     </div>
                   </div>
-                  <div className="action-buttons">
-                    {showNewJourney && (
-                      <>
-                        <button
-                          className="primary-btn"
-                          onClick={handleAddJourney}
-                          disabled={!newJourney.product || !newJourney.location}
-                        >
-                          Save Journey
-                        </button>
-                        <button
-                          className="primary-btn"
-                          style={{
-                            backgroundColor:
-                              newJourney.product && newJourney.location
-                                ? "#f44336"
-                                : "#45a049",
-                          }}
-                          onClick={() => {
-                            setNewJourney({
-                              id: "",
-                              location: undefined,
-                              product: undefined,
-                            });
-                            setShowNewJourney(false);
-                          }}
-                        >
-                          Cancel
-                        </button>
-                      </>
-                    )}
+                </div>
+              ) : (
+                <>
+                  <div className="table-container">
+                    {renderLocationTable(true, addLocationToStop)}
                   </div>
+                  <button
+                    className="secondary-btn"
+                    onClick={() => {
+                      setShowNewLocation(true);
+                    }}
+                  >
+                    {showNewLocation
+                      ? "Cancel"
+                      : locations.length === 0
+                        ? "Add Location"
+                        : "Add Another Location"}
+                  </button>
+                  <button
+                    className="secondary-btn"
+                    onClick={() => {
+                      setShowLocationModal(false);
+                      setShowJourneyModal(true);
+                    }}
+                  >
+                    Back
+                  </button>
                 </>
               )}
+
+              <div className="action-buttons">
+                {showNewLocation && (
+                  <>
+                    <button
+                      className="primary-btn"
+                      onClick={handleAddLocation}
+                      disabled={!newLocation.name || !newLocation.address}
+                    >
+                      Save Location
+                    </button>
+                    <button
+                      className="primary-btn"
+                      onClick={() => {
+                        setNewLocation({ address: "", name: "" });
+                        setShowNewLocation(false);
+                        setShowJourneyModal(true);
+                      }}
+                      style={{
+                        backgroundColor:
+                          newLocation.name && newLocation.address
+                            ? "#f44336"
+                            : "#45a049",
+                      }}
+                    >
+                      Cancel
+                    </button>
+                  </>
+                )}
+              </div>
             </div>
           )}
 
-          <div className="form-container">
-            <div className="input-wrapper">
-              {/* Products Modal */}
-              {showProductModal && (
-                <div className="content-panel">
-                  {!showNewProduct && products.length === 0 ? (
-                    <div className="empty-state">
-                      <h2>There are no deliverables saved.</h2>
-                      <button
-                        className="secondary-btn"
-                        onClick={() => {
-                          if (showNewProduct) {
+          {/* Products Modal */}
+          {showProductModal && (
+            <div className="content-panel">
+              {!showNewProduct && products.length === 0 ? (
+                <div className="empty-state">
+                  <h2>There are no deliverables saved.</h2>
+                  <button
+                    className="secondary-btn"
+                    onClick={() => {
+                      setShowNewProduct(true);
+                    }}
+                  >
+                    {showNewProduct ? "Cancel" : "Add Product"}
+                  </button>
+                  <button
+                    className="secondary-btn"
+                    onClick={() => {
+                      setShowProductModal(false);
+                      setShowJourneyModal(true);
+                    }}
+                  >
+                    Back
+                  </button>
+                </div>
+              ) : showNewProduct ? (
+                <div className="form-container">
+                  <h2>Add New Deliverable</h2>
+                  <div className="form-row">
+                    <div className="form-group">
+                      <div className="input-wrapper">
+                        <input
+                          type="text"
+                          placeholder="Product name"
+                          value={newProduct.name}
+                          onChange={(e) =>
                             setNewProduct({
-                              id: "",
-                              name: "",
-                              photo: "",
-                              quantity: "",
-                            });
-                            setShowNewProduct(false);
-                          } else {
-                            setShowNewProduct(true);
+                              ...newProduct,
+                              name: e.target.value,
+                            })
                           }
-                        }}
-                      >
-                        {showNewProduct ? "Cancel" : "Add Product"}
-                      </button>
-                      <button
-                        className="secondary-btn"
-                        onClick={() => {
-                          setShowProductModal(false);
-                          setShowJourneyModal(true);
-                        }}
-                      >
-                        Back
-                      </button>
-                    </div>
-                  ) : showNewProduct ? (
-                    <div className="form-container">
-                      <h2>Add New Deliverable</h2>
-                      <div className="form-row">
-                        <div className="form-group">
-                          <div className="input-wrapper">
-                            <input
-                              type="text"
-                              placeholder="Product name"
-                              value={newProduct.name}
-                              onChange={(e) =>
-                                setNewProduct({
-                                  ...newProduct,
-                                  name: e.target.value,
-                                })
-                              }
-                              className="form-input"
-                            />
-                          </div>
-                        </div>
-
-                        <div className="form-group">
-                          <div className="input-wrapper">
-                            <input
-                              type="text"
-                              placeholder="Quantity"
-                              value={newProduct.quantity}
-                              onChange={(e) =>
-                                setNewProduct({
-                                  ...newProduct,
-                                  quantity: e.target.value,
-                                })
-                              }
-                              className="form-input"
-                            />
-                          </div>
-                        </div>
-
-                        <div className="form-group">
-                          <div className="form-group">
-                            {!newProduct.photo && (
-                              <Dropzone
-                                heading="Photo"
-                                uploadType="photo"
-                                onUpload={(url: string) => {
-                                  setNewProduct((prev) => ({
-                                    ...prev,
-                                    photo: url,
-                                  }));
-                                }}
-                              />
-                            )}
-                            {newProduct.photo && (
-                              <div className="photo-preview">
-                                <img
-                                  src={`http://localhost:5000${newProduct.photo}`}
-                                  alt="Preview"
-                                  style={{
-                                    borderRadius: "15px",
-                                    alignContent: "center",
-                                    maxWidth: "300px",
-                                    maxHeight: "300px",
-                                    marginTop: "10px",
-                                  }}
-                                />
-                              </div>
-                            )}
-                          </div>
-                        </div>
+                          className="form-input"
+                        />
                       </div>
                     </div>
-                  ) : (
-                    <>
-                      <div className="table-container">
-                        {renderProductTable()}
-                      </div>
-                      <button
-                        className="secondary-btn"
-                        onClick={() => {
-                          if (showNewProduct) {
-                            setNewProduct({
-                              id: "",
-                              name: "",
-                              photo: "",
-                              quantity: "",
-                            });
-                            setShowNewProduct(false);
-                          } else {
-                            setShowNewProduct(true);
-                          }
-                        }}
-                      >
-                        Add Product
-                      </button>
-                      <button
-                        className="secondary-btn"
-                        onClick={() => {
-                          setShowProductModal(false);
-                          setShowJourneyModal(true);
-                        }}
-                      >
-                        Back
-                      </button>
-                    </>
-                  )}
 
-                  <div className="action-buttons">
-                    {showNewProduct && (
-                      <>
-                        <button
-                          className="primary-btn"
-                          onClick={handleAddProduct}
-                          disabled={!newProduct.name || !newProduct.quantity}
-                        >
-                          Save Product
-                        </button>
-                        <button
-                          className="primary-btn"
-                          style={{
-                            backgroundColor:
-                              newProduct.name && newProduct.quantity
-                                ? "#f44336"
-                                : "#45a049",
-                          }}
-                          onClick={() => {
-                            setNewProduct({
-                              id: "",
-                              name: "",
-                              photo: "",
-                              quantity: "",
-                            });
-                            setShowNewProduct(false);
-                          }}
-                        >
-                          Cancel
-                        </button>
-                      </>
-                    )}
+                    <div className="form-group">
+                      <div className="form-group">
+                        {!newProduct.photo && (
+                          <Dropzone
+                            heading="Photo"
+                            uploadType="photo"
+                            onUpload={(url: string) => {
+                              setNewProduct((prev) => ({
+                                ...prev,
+                                photo: url,
+                              }));
+                            }}
+                          />
+                        )}
+                        {newProduct.photo && (
+                          <div className="photo-preview">
+                            <img
+                              src={`http://localhost:5000${newProduct.photo}`}
+                              alt="Preview"
+                              style={{
+                                borderRadius: "15px",
+                                alignContent: "center",
+                                maxWidth: "300px",
+                                maxHeight: "300px",
+                                marginTop: "10px",
+                              }}
+                            />
+                          </div>
+                        )}
+                      </div>
+                    </div>
                   </div>
                 </div>
-              )}
-            </div>
-          </div>
-
-          <div className="form-container">
-            <div className="input-wrapper">
-              {/* Locations Modal */}
-              {showLocationModal && (
-                <div className="content-panel">
-                  {!showNewLocation && locations.length === 0 ? (
-                    <div className="empty-state">
-                      <h2>There are no locations saved.</h2>
-                      <button
-                        className="secondary-btn"
-                        onClick={() => {
-                          if (showNewLocation) {
-                            setNewLocation({ name: "", address: "" });
-                            setShowNewLocation(false);
-                          } else {
-                            setShowNewLocation(true);
-                          }
-                        }}
-                      >
-                        Add Location
-                      </button>
-                      <button
-                        className="secondary-btn"
-                        onClick={() => {
-                          setShowLocationModal(false);
-                          setShowJourneyModal(true);
-                        }}
-                      >
-                        Back
-                      </button>
-                    </div>
-                  ) : showNewLocation ? (
-                    <div className="form-container">
-                      <h2>Add New Location</h2>
-                      <div className="form-row">
-                        <div className="form-group">
-                          <div className="input-wrapper">
-                            <input
-                              type="text"
-                              placeholder="Address"
-                              value={newLocation.address}
-                              onChange={(e) =>
-                                handleAddressChange(e.target.value)
-                              }
-                              className="form-input"
-                            />
-                          </div>
-                        </div>
-
-                        <div className="form-group">
-                          <div className="input-wrapper">
-                            <input
-                              type="text"
-                              placeholder="Location name"
-                              value={newLocation.name}
-                              onChange={(e) =>
-                                setNewLocation({
-                                  ...newLocation,
-                                  name: e.target.value,
-                                })
-                              }
-                              className="form-input"
-                            />
-                            {extractedCoords && (
-                              <div className="coordinates-display">
-                                <small>
-                                  Coordinates extracted:{" "}
-                                  {extractedCoords.lat.toFixed(6)},{" "}
-                                  {extractedCoords.lng.toFixed(6)}
-                                </small>
-                              </div>
-                            )}
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                  ) : (
-                    <>
-                      <div className="table-container">
-                        {renderLocationTable()}
-                      </div>
-                      <button
-                        className="secondary-btn"
-                        onClick={() => {
-                          if (showNewLocation) {
-                            setNewLocation({ name: "", address: "" });
-                            setShowNewLocation(false);
-                          } else {
-                            setShowNewLocation(true);
-                          }
-                        }}
-                      >
-                        {showNewLocation
-                          ? "Cancel"
-                          : locations.length === 0
-                            ? "Add Location"
-                            : "Add Another Location"}
-                      </button>
-                      <button
-                        className="secondary-btn"
-                        onClick={() => {
-                          setShowLocationModal(false);
-                          setShowJourneyModal(true);
-                        }}
-                      >
-                        Back
-                      </button>
-                    </>
-                  )}
-
-                  <div className="action-buttons">
-                    {showNewLocation && (
-                      <>
-                        <button
-                          className="primary-btn"
-                          onClick={handleAddLocation}
-                          disabled={!newLocation.name || !newLocation.address}
-                        >
-                          Save Location
-                        </button>
-                        <button
-                          className="primary-btn"
-                          onClick={() => {
-                            setNewLocation({ address: "", name: "" });
-                            setShowNewLocation(false);
-                          }}
-                          style={{
-                            backgroundColor:
-                              newLocation.name && newLocation.address
-                                ? "#f44336"
-                                : "#45a049",
-                          }}
-                        >
-                          Cancel
-                        </button>
-                      </>
-                    )}
+              ) : (
+                <>
+                  <div className="table-container">
+                    {renderProductTable(true, (product) => {
+                      addProductToStop(product);
+                      setShowProductModal(false);
+                    })}
                   </div>
-                </div>
+                  <button
+                    className="secondary-btn"
+                    onClick={() => {
+                      if (showNewProduct) {
+                        setNewProduct({
+                          id: "",
+                          name: "",
+                          photo: "",
+                        });
+                        setShowNewProduct(false);
+                      } else {
+                        setShowNewProduct(true);
+                      }
+                    }}
+                  >
+                    Add Product
+                  </button>
+                  <button
+                    className="secondary-btn"
+                    onClick={() => {
+                      setShowProductModal(false);
+                      setShowJourneyModal(true);
+                    }}
+                  >
+                    Back
+                  </button>
+                </>
               )}
+
+              <div className="action-buttons">
+                {showNewProduct && (
+                  <>
+                    <button
+                      className="primary-btn"
+                      onClick={handleAddProduct}
+                      disabled={!newProduct.name}
+                    >
+                      Save Product
+                    </button>
+                    <button
+                      className="primary-btn"
+                      style={{
+                        backgroundColor: newProduct.name
+                          ? "#f44336"
+                          : "#45a049",
+                      }}
+                      onClick={() => {
+                        setNewProduct({
+                          id: "",
+                          name: "",
+                          photo: "",
+                        });
+                        setShowNewProduct(false);
+                      }}
+                    >
+                      Cancel
+                    </button>
+                  </>
+                )}
+              </div>
             </div>
-          </div>
+          )}
         </div>
       </div>
     </div>
