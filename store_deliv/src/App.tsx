@@ -418,6 +418,7 @@ function App() {
       items: currentStop.items || [],
     });
     setShowLocationModal(false);
+    setShowJourneyModal(true);
   };
 
   const addProductToStop = (product: Product) => {
@@ -426,6 +427,7 @@ function App() {
       productName: product.name,
       quantity: "",
     });
+    setShowJourneyModal(true);
   };
 
   const addItemToCurrentStop = () => {
@@ -492,7 +494,7 @@ function App() {
   const renderJourneyBuilder = () => {
     return (
       <div className="journey-builder">
-        <h2>Build Your Journey</h2>
+        <h1>Build Your Journey</h1>
 
         {/* Journey Details */}
         <div className="form-row">
@@ -559,7 +561,10 @@ function App() {
               <div className="add-item-form">
                 <button
                   className="secondary-btn"
-                  onClick={() => setShowProductModal(true)}
+                  onClick={() => {
+                    setShowProductModal(true);
+                    setShowJourneyModal(false);
+                  }}
                   disabled={!!currentItem.productId}
                 >
                   Select Product
