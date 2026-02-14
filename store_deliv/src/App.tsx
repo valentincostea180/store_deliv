@@ -556,25 +556,13 @@ function App() {
           {currentStop.location && (
             <div className="items-section">
               <h4>Products for this location</h4>
-
               {/* Current item being added */}
-              <div className="add-item-form">
-                <button
-                  className="secondary-btn"
-                  onClick={() => {
-                    setShowProductModal(true);
-                    setShowJourneyModal(false);
-                  }}
-                  disabled={!!currentItem.productId}
-                >
-                  Select Product
-                </button>
-
+              <div className="form-row">
                 {currentItem.productId && (
                   <>
-                    <span className="selected-product">
+                    <div className="selected-product">
                       {currentItem.productName}
-                    </span>
+                    </div>
                     <input
                       type="text"
                       placeholder="Quantity"
@@ -587,29 +575,36 @@ function App() {
                       }
                       className="form-input quantity-input"
                     />
-                    <button
-                      className="primary-btn"
-                      onClick={addItemToCurrentStop}
-                      disabled={!currentItem.quantity}
+                    <div
+                      style={{
+                        display: "flex",
+                        flexDirection: "column",
+                        alignItems: "center",
+                      }}
                     >
-                      Add to Stop
-                    </button>
-                    <button
-                      className="small-btn"
-                      onClick={() =>
-                        setCurrentItem({
-                          productId: "",
-                          productName: "",
-                          quantity: "",
-                        })
-                      }
-                    >
-                      Cancel
-                    </button>
+                      <button
+                        className="small-btn"
+                        onClick={() =>
+                          setCurrentItem({
+                            productId: "",
+                            productName: "",
+                            quantity: "",
+                          })
+                        }
+                      >
+                        Cancel
+                      </button>
+                      <button
+                        className="primary-btn"
+                        onClick={addItemToCurrentStop}
+                        disabled={!currentItem.quantity}
+                      >
+                        Add to Stop
+                      </button>
+                    </div>
                   </>
                 )}
               </div>
-
               {/* Items list for current stop */}
               {currentStop.items && currentStop.items.length > 0 && (
                 <table className="items-table">
@@ -645,6 +640,16 @@ function App() {
                   </tbody>
                 </table>
               )}
+              <button
+                className="secondary-btn"
+                onClick={() => {
+                  setShowProductModal(true);
+                  setShowJourneyModal(false);
+                }}
+                disabled={!!currentItem.productId}
+              >
+                Select Product
+              </button>
 
               {/* Save current stop button */}
               {currentStop.items && currentStop.items.length > 0 && (
