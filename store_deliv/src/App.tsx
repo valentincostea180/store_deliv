@@ -920,36 +920,34 @@ function App() {
                       </div>
                     </div>
 
-                    <div className="form-group">
-                      <div className="form-group">
-                        {!newProduct.photo && (
-                          <Dropzone
-                            heading="Photo"
-                            uploadType="photo"
-                            onUpload={(url: string) => {
-                              setNewProduct((prev) => ({
-                                ...prev,
-                                photo: url,
-                              }));
-                            }}
-                          />
-                        )}
-                        {newProduct.photo && (
-                          <div className="photo-preview">
-                            <img
-                              src={`http://localhost:5000${newProduct.photo}`}
-                              alt="Preview"
-                              style={{
-                                borderRadius: "15px",
-                                alignContent: "center",
-                                maxWidth: "300px",
-                                maxHeight: "300px",
-                                marginTop: "10px",
-                              }}
-                            />
-                          </div>
-                        )}
-                      </div>
+                    <div
+                      className="form-group"
+                      style={{ marginBottom: "2rem" }}
+                    >
+                      {!newProduct.photo && (
+                        <Dropzone
+                          heading="Photo"
+                          uploadType="photo"
+                          onUpload={(url: string) => {
+                            setNewProduct((prev) => ({
+                              ...prev,
+                              photo: url,
+                            }));
+                          }}
+                        />
+                      )}
+                      {newProduct.photo && (
+                        <img
+                          src={`http://localhost:5000${newProduct.photo}`}
+                          alt="Preview"
+                          style={{
+                            borderRadius: "15px",
+                            alignContent: "center",
+                            maxWidth: "100%",
+                            marginTop: "10px",
+                          }}
+                        />
+                      )}
                     </div>
                   </div>
                 </div>
