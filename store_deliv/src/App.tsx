@@ -555,7 +555,7 @@ function App() {
           {/* Items for current stop */}
           {currentStop.location && (
             <div className="items-section">
-              <h4>Products for this location</h4>
+              {!currentStop.items && <h4>Products for this location</h4>}
               {/* Current item being added */}
               <div className="form-row">
                 {currentItem.productId && (
@@ -564,7 +564,7 @@ function App() {
                       {currentItem.productName}
                     </div>
                     <input
-                      type="text"
+                      type="number"
                       placeholder="Quantity"
                       value={currentItem.quantity || ""}
                       onChange={(e) =>
@@ -583,6 +583,13 @@ function App() {
                       }}
                     >
                       <button
+                        className="primary-btn"
+                        onClick={addItemToCurrentStop}
+                        disabled={!currentItem.quantity}
+                      >
+                        Add to Stop
+                      </button>
+                      <button
                         className="small-btn"
                         onClick={() =>
                           setCurrentItem({
@@ -593,13 +600,6 @@ function App() {
                         }
                       >
                         Cancel
-                      </button>
-                      <button
-                        className="primary-btn"
-                        onClick={addItemToCurrentStop}
-                        disabled={!currentItem.quantity}
-                      >
-                        Add to Stop
                       </button>
                     </div>
                   </>
