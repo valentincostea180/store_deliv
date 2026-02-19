@@ -674,25 +674,27 @@ function App() {
         </div>
 
         {/* Journey Stops Summary */}
-        {currentJourney.stops && currentJourney.stops.length > 0 && (
-          <div className="journey-summary">
-            <h3>Journey Stops</h3>
-            {currentJourney.stops.map((stop, stopIndex) => (
-              <div key={stopIndex} className="stop-summary">
-                <h4>
-                  Stop {stopIndex + 1}: {stop.location.name}
-                </h4>
-                <ul>
-                  {stop.items.map((item, itemIndex) => (
-                    <li key={itemIndex}>
-                      {item.productName} - Quantity: {item.quantity}
-                    </li>
-                  ))}
-                </ul>
-              </div>
-            ))}
-          </div>
-        )}
+        {showProductTable &&
+          currentJourney.stops &&
+          currentJourney.stops.length > 0 && (
+            <div className="journey-summary">
+              <h3>Journey Stops</h3>
+              {currentJourney.stops.map((stop, stopIndex) => (
+                <div key={stopIndex} className="stop-summary">
+                  <h4>
+                    Stop {stopIndex + 1}: {stop.location.name}
+                  </h4>
+                  <ul>
+                    {stop.items.map((item, itemIndex) => (
+                      <li key={itemIndex}>
+                        {item.productName} - Quantity: {item.quantity}
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              ))}
+            </div>
+          )}
 
         {/* Save Journey Button */}
         <div className="action-buttons">
@@ -936,7 +938,7 @@ function App() {
 
                     <div
                       className="form-group"
-                      style={{ marginBottom: "2rem" }}
+                      style={{ marginBottom: "2rem", marginTop: "0.5rem" }}
                     >
                       {!newProduct.photo && (
                         <Dropzone
