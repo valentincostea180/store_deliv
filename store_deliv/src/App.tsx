@@ -534,15 +534,16 @@ function App() {
             {currentStop.location ? (
               <div className="selected-item">
                 <h2 style={{ marginBottom: "0" }}>Location</h2>{" "}
-                {currentStop.location.name}
-                <button
-                  onClick={() =>
-                    setCurrentStop({ ...currentStop, location: undefined })
-                  }
-                  className="small-btn"
+                <div
+                  onClick={() => {
+                    (setCurrentStop({ ...currentStop, location: undefined }),
+                      setShowLocationModal(true));
+                    setShowJourneyModal(false);
+                  }}
+                  title={"Click to change location."}
                 >
-                  Change
-                </button>
+                  {currentStop.location.name}
+                </div>
               </div>
             ) : (
               <button
