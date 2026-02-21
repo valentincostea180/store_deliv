@@ -527,6 +527,7 @@ function App() {
               onClick={() => setShowJourneyName(false)}
               className="secondary-btn"
               style={{ marginTop: "0.5rem" }}
+              disabled={!currentJourney.name}
             >
               Save
             </button>

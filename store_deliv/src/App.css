@@ -256,6 +256,12 @@ table tr:last-child td:last-child {
   border: 1px solid var(--secondary-color);
 }
 
+.secondary-btn:disabled {
+  background-color: #eeeeee46;
+  cursor: not-allowed;
+  transform: none;
+}
+
 .secondary-btn:hover {
   background-color: #ffebee;
 }
