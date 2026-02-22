@@ -545,7 +545,7 @@ function App() {
             <div className="location-selection">
               {currentStop.location ? (
                 <div className="selected-item">
-                  <h2 style={{ marginBottom: "0" }}>Location</h2>{" "}
+                  <h2 style={{ margin: "0" }}>Location</h2>{" "}
                   <div
                     onClick={() => {
                       (setCurrentStop({ ...currentStop, location: undefined }),
@@ -575,9 +575,10 @@ function App() {
               <div className="items-section">
                 {!currentStop.items && <h4>Products for this location</h4>}
                 {/* Current item being added */}
-                <div className="form-row">
+                <div style={{ gap: "10%" }} className="form-row">
                   {currentItem.productId && (
                     <>
+                      <h2 style={{ marginBottom: "0" }}>Product</h2>
                       <div className="selected-product">
                         {currentItem.productName}
                       </div>
@@ -585,6 +586,7 @@ function App() {
                         type="number"
                         placeholder="Quantity"
                         value={currentItem.quantity || ""}
+                        style={{ marginTop: "1rem" }}
                         onChange={(e) =>
                           setCurrentItem({
                             ...currentItem,
@@ -703,7 +705,7 @@ function App() {
                   <ul>
                     {stop.items.map((item, itemIndex) => (
                       <li key={itemIndex}>
-                        {item.productName} - Quantity: {item.quantity}
+                        {item.productName} x {item.quantity}
                       </li>
                     ))}
                   </ul>
