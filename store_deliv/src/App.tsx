@@ -534,6 +534,30 @@ function App() {
           </div>
         )}
 
+        {/* Journey Stops Summary */}
+        {showProductTable &&
+          currentJourney.stops &&
+          currentJourney.stops.length > 0 && (
+            <div className="journey-summary">
+              <h3>Journey Stops</h3>
+              {currentJourney.stops.map((stop, stopIndex) => (
+                <div key={stopIndex} className="stop-summary">
+                  <h4 style={{ marginBottom: "0.2rem" }}>
+                    Stop {stopIndex + 1}
+                  </h4>
+                  <h5 style={{ margin: "0.2rem" }}>{stop.location.name}</h5>
+                  <ul>
+                    {stop.items.map((item, itemIndex) => (
+                      <li key={itemIndex}>
+                        {item.productName} x {item.quantity}
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              ))}
+            </div>
+          )}
+
         {/* Current Stop Builder */}
         {!showJourneyName && (
           <div className="stop-builder">
@@ -575,7 +599,10 @@ function App() {
               <div className="items-section">
                 {!currentStop.items && <h4>Products for this location</h4>}
                 {/* Current item being added */}
-                <div style={{ gap: "10%" }} className="form-row">
+                <div
+                  style={{ marginBottom: "1rem", gap: "10%" }}
+                  className="form-row"
+                >
                   {currentItem.productId && (
                     <>
                       <h2 style={{ marginBottom: "0" }}>Product</h2>
@@ -614,12 +641,11 @@ function App() {
                         <button
                           className="secondary-btn"
                           onClick={() => {
-                            (setShowProductTable(false),
-                              setCurrentItem({
-                                productId: "",
-                                productName: "",
-                                quantity: "",
-                              }));
+                            setCurrentItem({
+                              productId: "",
+                              productName: "",
+                              quantity: "",
+                            });
                           }}
                         >
                           Cancel
@@ -673,6 +699,7 @@ function App() {
                     onClick={() => {
                       setShowProductModal(true);
                       setShowJourneyModal(false);
+                      setShowProductTable(false);
                     }}
                     disabled={!!currentItem.productId}
                   >
@@ -681,38 +708,17 @@ function App() {
                 )}
 
                 {/* Save current stop button */}
-                {currentStop.items && currentStop.items.length > 0 && (
-                  <button className="primary-btn" onClick={saveCurrentStop}>
-                    Save This Stop
-                  </button>
-                )}
+                {showProductTable &&
+                  currentStop.items &&
+                  currentStop.items.length > 0 && (
+                    <button className="primary-btn" onClick={saveCurrentStop}>
+                      Save This Stop
+                    </button>
+                  )}
               </div>
             )}
           </div>
         )}
-
-        {/* Journey Stops Summary */}
-        {showProductTable &&
-          currentJourney.stops &&
-          currentJourney.stops.length > 0 && (
-            <div className="journey-summary">
-              <h3>Journey Stops</h3>
-              {currentJourney.stops.map((stop, stopIndex) => (
-                <div key={stopIndex} className="stop-summary">
-                  <h4>
-                    Stop {stopIndex + 1}: {stop.location.name}
-                  </h4>
-                  <ul>
-                    {stop.items.map((item, itemIndex) => (
-                      <li key={itemIndex}>
-                        {item.productName} x {item.quantity}
-                      </li>
-                    ))}
-                  </ul>
-                </div>
-              ))}
-            </div>
-          )}
 
         {/* Save Journey Button */}
         {!showJourneyName && (
@@ -940,7 +946,7 @@ function App() {
               ) : showNewProduct ? (
                 <div className="form-container">
                   <h2>Add New Deliverable</h2>
-                  <div className="form-row">
+                  <div style={{ marginBottom: "2rem" }} className="form-row">
                     <div className="form-group">
                       <div className="input-wrapper">
                         <input
@@ -1019,6 +1025,7 @@ function App() {
                     onClick={() => {
                       setShowProductModal(false);
                       setShowJourneyModal(true);
+                      setShowProductTable(true);
                     }}
                   >
                     Back

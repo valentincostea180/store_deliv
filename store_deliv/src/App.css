@@ -92,7 +92,7 @@ body {
 
 .form-container {
   flex-grow: 1;
-  margin-bottom: 2rem;
+  margin-bottom: 1rem;
 }
 
 .form-container h2 {
@@ -138,6 +138,20 @@ body {
 }
 
 /* Tables */
+
+ul {
+  list-style-type: none;
+  text-align: center;
+}
+
+th {
+  width: 100px;
+}
+
+table {
+  margin-bottom: 1rem;
+}
+
 .items-section {
   display: flex;
   flex-direction: column;
