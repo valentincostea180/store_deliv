@@ -561,7 +561,7 @@ function App() {
         {/* Current Stop Builder */}
         {!showJourneyName && (
           <div className="stop-builder">
-            {!currentStop.location && (
+            {!currentJourney.stops && !currentStop.location && (
               <h2 style={{ marginBottom: "0" }}>Current Stop</h2>
             )}
 
@@ -572,7 +572,10 @@ function App() {
                   <h2 style={{ margin: "0" }}>Location</h2>{" "}
                   <div
                     onClick={() => {
-                      (setCurrentStop({ ...currentStop, location: undefined }),
+                      (setCurrentStop({
+                        ...currentStop,
+                        location: undefined,
+                      }),
                         setShowLocationModal(true));
                       setShowJourneyModal(false);
                     }}
@@ -581,7 +584,7 @@ function App() {
                     {currentStop.location.name}
                   </div>
                 </div>
-              ) : (
+              ) : !currentJourney.stops ? (
                 <button
                   className="secondary-btn"
                   onClick={() => {
@@ -590,6 +593,16 @@ function App() {
                   }}
                 >
                   Select Location
+                </button>
+              ) : (
+                <button
+                  className="secondary-btn"
+                  onClick={() => {
+                    setShowLocationModal(true);
+                    setShowJourneyModal(false);
+                  }}
+                >
+                  Add New Location
                 </button>
               )}
             </div>
@@ -694,17 +707,21 @@ function App() {
                     </table>
                   )}
                 {!currentItem.productId && (
-                  <button
-                    className="secondary-btn"
-                    onClick={() => {
-                      setShowProductModal(true);
-                      setShowJourneyModal(false);
-                      setShowProductTable(false);
-                    }}
-                    disabled={!!currentItem.productId}
-                  >
-                    Select Product
-                  </button>
+                  <>
+                    {" "}
+                    <button
+                      className="secondary-btn"
+                      onClick={() => {
+                        setShowProductModal(true);
+                        setShowJourneyModal(false);
+                        setShowProductTable(false);
+                      }}
+                      disabled={!!currentItem.productId}
+                    >
+                      Select Product
+                    </button>
+                    <button>Cancel</button>
+                  </>
                 )}
 
                 {/* Save current stop button */}
