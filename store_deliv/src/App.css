@@ -214,7 +214,6 @@ table tr:last-child td:last-child {
   display: flex;
   justify-content: space-between;
   gap: 0.5rem;
-  padding-top: 1rem;
 }
 
 .modal-btn {
@@ -293,7 +292,7 @@ table tr:last-child td:last-child {
 
 /* Dropzone */
 .dropzone-box {
-  padding: 0 1.6rem 0.5rem 1.6rem;
+  padding: 0.2rem 2rem 1rem 2rem;
   border: var(--primary-color);
   border-style: dotted;
   border-radius: 1rem;

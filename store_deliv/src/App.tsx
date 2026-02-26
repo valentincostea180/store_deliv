@@ -561,9 +561,11 @@ function App() {
         {/* Current Stop Builder */}
         {!showJourneyName && (
           <div className="stop-builder">
-            {!currentJourney.stops && !currentStop.location && (
-              <h2 style={{ marginBottom: "0" }}>Current Stop</h2>
-            )}
+            {currentJourney.stops &&
+              !(currentJourney.stops?.length > 0) &&
+              !currentStop.location && (
+                <h2 style={{ marginBottom: "0" }}>Current Stop</h2>
+              )}
 
             {/* Location Selection */}
             <div className="location-selection">
@@ -584,7 +586,8 @@ function App() {
                     {currentStop.location.name}
                   </div>
                 </div>
-              ) : !currentJourney.stops ? (
+              ) : currentJourney.stops &&
+                !(currentJourney.stops?.length > 0) ? (
                 <button
                   className="secondary-btn"
                   onClick={() => {
@@ -610,7 +613,13 @@ function App() {
             {/* Items for current stop */}
             {currentStop.location && (
               <div className="items-section">
-                {!currentStop.items && <h4>Products for this location</h4>}
+                {!currentItem.productId &&
+                  currentStop.items &&
+                  currentStop.items.length > 0 && (
+                    <h2 style={{ marginBottom: "0" }}>
+                      Products for this location
+                    </h2>
+                  )}
                 {/* Current item being added */}
                 <div
                   style={{ marginBottom: "1rem", gap: "10%" }}
@@ -671,85 +680,102 @@ function App() {
                 {showProductTable &&
                   currentStop.items &&
                   currentStop.items.length > 0 && (
-                    <table className="items-table">
-                      <thead>
-                        <tr>
-                          <th>Product</th>
-                          <th>Quantity</th>
-                          <th>Action</th>
-                        </tr>
-                      </thead>
-                      <tbody>
-                        {currentStop.items.map((item, index) => (
-                          <tr key={index}>
-                            <td>{item.productName}</td>
-                            <td>{item.quantity}</td>
-                            <td>
-                              <button
-                                onClick={() => {
-                                  const newItems = [
-                                    ...(currentStop.items || []),
-                                  ];
-                                  newItems.splice(index, 1);
-                                  setCurrentStop({
-                                    ...currentStop,
-                                    items: newItems,
-                                  });
-                                }}
-                                className="delete-btn"
-                              >
-                                Remove
-                              </button>
-                            </td>
+                    <>
+                      <table className="items-table">
+                        <thead>
+                          <tr>
+                            <th>Product</th>
+                            <th>Quantity</th>
+                            <th>Action</th>
                           </tr>
-                        ))}
-                      </tbody>
-                    </table>
+                        </thead>
+                        <tbody>
+                          {currentStop.items.map((item, index) => (
+                            <tr key={index}>
+                              <td>{item.productName}</td>
+                              <td>{item.quantity}</td>
+                              <td>
+                                <button
+                                  onClick={() => {
+                                    const newItems = [
+                                      ...(currentStop.items || []),
+                                    ];
+                                    newItems.splice(index, 1);
+                                    setCurrentStop({
+                                      ...currentStop,
+                                      items: newItems,
+                                    });
+                                  }}
+                                  className="delete-btn"
+                                >
+                                  Remove
+                                </button>
+                              </td>
+                            </tr>
+                          ))}
+                        </tbody>
+                      </table>
+                      <button
+                        className="secondary-btn"
+                        onClick={() => {
+                          setShowProductModal(true);
+                          setShowJourneyModal(false);
+                          setShowProductTable(false);
+                        }}
+                        disabled={!!currentItem.productId}
+                        style={{ margin: "1rem" }}
+                      >
+                        Add New Product
+                      </button>
+                    </>
                   )}
-                {!currentItem.productId && (
-                  <>
-                    {" "}
-                    <button
-                      className="secondary-btn"
-                      onClick={() => {
-                        setShowProductModal(true);
-                        setShowJourneyModal(false);
-                        setShowProductTable(false);
-                      }}
-                      disabled={!!currentItem.productId}
-                    >
-                      Select Product
-                    </button>
-                    <button>Cancel</button>
-                  </>
-                )}
-
-                {/* Save current stop button */}
-                {showProductTable &&
+                {!currentItem.productId &&
                   currentStop.items &&
-                  currentStop.items.length > 0 && (
-                    <button className="primary-btn" onClick={saveCurrentStop}>
-                      Save This Stop
-                    </button>
+                  !(currentStop.items.length > 0) && (
+                    <>
+                      {" "}
+                      <h2 style={{ margin: "0" }}>Current Product</h2>
+                      <button
+                        className="secondary-btn"
+                        onClick={() => {
+                          setShowProductModal(true);
+                          setShowJourneyModal(false);
+                          setShowProductTable(false);
+                        }}
+                        disabled={!!currentItem.productId}
+                      >
+                        Select Product
+                      </button>
+                    </>
                   )}
               </div>
             )}
           </div>
         )}
 
-        {/* Save Journey Button */}
         {!showJourneyName && (
           <div className="action-buttons">
-            <button
-              className="primary-btn"
-              onClick={saveJourney}
-              disabled={
-                !currentJourney.name ||
-                (currentJourney.stops?.length || 0) === 0
-              }
-            >
-              Save Journey
-            </button>
+            {/* Save Current Stop button */}
+            {showProductTable &&
+              currentStop.items &&
+              currentStop.items.length > 0 && (
+                <button className="primary-btn" onClick={saveCurrentStop}>
+                  Save This Stop
+                </button>
+              )}
+            {/* Save Journey Button */}
+            {currentJourney.stops && showProductTable && (
+              <button
+                className="primary-btn"
+                onClick={saveJourney}
+                disabled={
+                  !currentJourney.name ||
+                  (currentJourney.stops?.length || 0) === 0
+                }
+              >
+                Save Journey
+              </button>
+            )}
             <button
               className="secondary-btn"
               onClick={() => {
@@ -961,7 +987,10 @@ function App() {
                   </button>
                 </div>
               ) : showNewProduct ? (
-                <div className="form-container">
+                <div
+                  style={{ marginBottom: "0rem" }}
+                  className="form-container"
+                >
                   <h2>Add New Deliverable</h2>
                   <div style={{ marginBottom: "2rem" }} className="form-row">
                     <div className="form-group">
@@ -983,7 +1012,7 @@ function App() {
 
                     <div
                       className="form-group"
-                      style={{ marginBottom: "2rem", marginTop: "0.5rem" }}
+                      style={{ marginBottom: "3rem", marginTop: "0.5rem" }}
                     >
                       {!newProduct.photo && (
                         <Dropzone
