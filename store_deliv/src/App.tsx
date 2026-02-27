@@ -536,6 +536,7 @@ function App() {
 
         {/* Journey Stops Summary */}
         {showProductTable &&
+          !currentStop.location &&
           currentJourney.stops &&
           currentJourney.stops.length > 0 && (
             <div className="journey-summary">
