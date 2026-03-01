@@ -5,7 +5,7 @@
   --card-background: #ffffff;
   --border-color: #ddd;
   --text-color: #333;
-  --text-light: #666;
+  --text-light: #777;
   --hover-color: #f0f0f0;
 }
 
@@ -48,7 +48,6 @@ body {
 .app-content {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(600px, 1fr));
-
   gap: 30px;
 }
 
@@ -138,7 +137,6 @@ body {
 }
 
 /* Tables */
-
 ul {
   list-style-type: none;
   text-align: center;
@@ -150,13 +148,6 @@ th {
 
 table {
   margin-bottom: 1rem;
-}
-
-.items-section {
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
 }
 
 .table-container {
@@ -228,12 +219,6 @@ table tr:last-child td:last-child {
   transition: all 0.2s;
 }
 
-.small-btn {
-  margin: 0.5rem;
-  width: 62px;
-  height: 22px;
-}
-
 .primary-btn,
 .secondary-btn,
 .add-btn {
@@ -269,14 +254,14 @@ table tr:last-child td:last-child {
   border: 1px solid var(--secondary-color);
 }
 
+.secondary-btn:hover {
+  background-color: #ffebee;
+}
+
 .secondary-btn:disabled {
   background-color: #eeeeee46;
   cursor: not-allowed;
   transform: none;
-}
-
-.secondary-btn:hover {
-  background-color: #ffebee;
 }
 
 .add-btn {
@@ -288,6 +273,12 @@ table tr:last-child td:last-child {
 .add-btn:hover {
   background-color: #45a049;
   transform: translateY(-1px);
+}
+
+.small-btn {
+  margin: 0.5rem;
+  width: 62px;
+  height: 22px;
 }
 
 /* Dropzone */
@@ -303,7 +294,7 @@ table tr:last-child td:last-child {
   padding: 20px;
   font-style: italic;
   text-align: center;
-  color: #666;
+  color: #5b5b5b;
 }
 
 /* Error Message */
@@ -328,8 +319,16 @@ table tr:last-child td:last-child {
   border: none;
 }
 
+/* Journey Builder */
 .journey-builder {
   text-align: center;
+}
+
+.items-section {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
 }
 
 .selected-item {
