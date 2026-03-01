@@ -60,9 +60,13 @@ function App() {
   }, []);
 
   const [showProductModal, setShowProductModal] = useState(false);
-  const [showProductTable, setShowProductTable] = useState(false);
   const [showLocationModal, setShowLocationModal] = useState(false);
   const [showJourneyModal, setShowJourneyModal] = useState(false);
+
+  const [showStopButton, setShowStopButton] = useState(false);
+
+  const [showProductTable, setShowProductTable] = useState(false);
+
   const [showJourneyName, setShowJourneyName] = useState(true);
 
   const [showNewProduct, setShowNewProduct] = useState(false);
@@ -453,6 +457,7 @@ function App() {
 
       setShowProductModal(false);
       setShowProductTable(true);
+      setShowStopButton(true);
     }
   };
 
@@ -722,6 +727,7 @@ function App() {
                           setShowProductModal(true);
                           setShowJourneyModal(false);
                           setShowProductTable(false);
+                          setShowStopButton(false);
                         }}
                         disabled={!!currentItem.productId}
                         style={{ margin: "1rem" }}
@@ -754,7 +760,7 @@ function App() {
           </div>
         )}
 
-        {!showJourneyName && (
+        {showStopButton && !showJourneyName && (
           <div className="action-buttons">
             {/* Save Current Stop button */}
             {showProductTable &&
@@ -765,7 +771,7 @@ function App() {
                 </button>
               )}
             {/* Save Journey Button */}
-            {currentJourney.stops && showProductTable && (
+            {!showStopButton && currentJourney.stops && showProductTable && (
               <button
                 className="primary-btn"
                 onClick={saveJourney}
@@ -782,6 +788,7 @@ function App() {
               onClick={() => {
                 setShowJourneyModal(false);
                 setShowJourneyName(true);
+                setShowStopButton(false);
                 setCurrentJourney({ id: "", name: "", date: "", stops: [] });
               }}
             >
