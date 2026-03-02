@@ -472,6 +472,8 @@ function App() {
         location: undefined,
         items: [],
       });
+
+      setShowStopButton(false);
     }
   };
 
@@ -760,10 +762,11 @@ function App() {
           </div>
         )}
 
-        {showStopButton && !showJourneyName && (
+        {!showJourneyName && (
           <div className="action-buttons">
             {/* Save Current Stop button */}
-            {showProductTable &&
+            {showStopButton &&
+              showProductTable &&
               currentStop.items &&
               currentStop.items.length > 0 && (
                 <button className="primary-btn" onClick={saveCurrentStop}>
@@ -771,7 +774,7 @@ function App() {
                 </button>
               )}
             {/* Save Journey Button */}
-            {!showStopButton && currentJourney.stops && showProductTable && (
+            {!showStopButton && (
               <button
                 className="primary-btn"
                 onClick={saveJourney}
@@ -1041,7 +1044,7 @@ function App() {
                           style={{
                             borderRadius: "15px",
                             alignContent: "center",
-                            maxWidth: "100%",
+                            maxWidth: "100px",
                             marginTop: "10px",
                           }}
                         />
