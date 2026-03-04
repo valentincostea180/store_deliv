@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import "./App.css";
 import Dropzone from "./components/Dropzone";
 import { extractCoordinatesFromGoogleMapsUrl } from "./gps.tsx";
+import Dropdown from "react-bootstrap/Dropdown";
 
 interface Product {
   id: string;
@@ -550,17 +551,30 @@ function App() {
               <h3>Journey Stops</h3>
               {currentJourney.stops.map((stop, stopIndex) => (
                 <div key={stopIndex} className="stop-summary">
-                  <h4 style={{ marginBottom: "0.2rem" }}>
-                    Stop {stopIndex + 1}
-                  </h4>
-                  <h5 style={{ margin: "0.2rem" }}>{stop.location.name}</h5>
-                  <ul>
-                    {stop.items.map((item, itemIndex) => (
-                      <li key={itemIndex}>
-                        {item.productName} x {item.quantity}
-                      </li>
-                    ))}
-                  </ul>
+                  <Dropdown>
+                    <Dropdown.Toggle
+                      variant="success"
+                      id={`dropdown-stop-${stopIndex}`}
+                      className="secondary-btn"
+                      style={{ border: "none" }}
+                    >
+                      Stop {stopIndex + 1}
+                    </Dropdown.Toggle>
+                    <Dropdown.Menu>
+                      <Dropdown.ItemText>
+                        <strong>Location:</strong> {stop.location.name}
+                      </Dropdown.ItemText>
+                      <Dropdown.Divider />
+                      <Dropdown.ItemText>
+                        <strong>Products:</strong>
+                      </Dropdown.ItemText>
+                      {stop.items.map((item, itemIndex) => (
+                        <Dropdown.ItemText key={itemIndex}>
+                          {item.productName} x {item.quantity}
+                        </Dropdown.ItemText>
+                      ))}
+                    </Dropdown.Menu>
+                  </Dropdown>
                 </div>
               ))}
             </div>
@@ -613,7 +627,7 @@ function App() {
                     setShowJourneyModal(false);
                   }}
                 >
-                  Add New Location
+                  Add New Stop
                 </button>
               )}
             </div>
