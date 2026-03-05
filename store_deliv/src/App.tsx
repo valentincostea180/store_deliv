@@ -77,6 +77,10 @@ function App() {
   const [locations, setLocations] = useState<Location[]>([]);
   const [journeys, setJourneys] = useState<Journey[]>([]);
 
+  const [openDropdowns, setOpenDropdowns] = useState<{
+    [key: string]: boolean;
+  }>({});
+
   const [currentJourney, setCurrentJourney] = useState<Partial<Journey>>({
     id: "",
     name: "",
@@ -113,6 +117,13 @@ function App() {
   {
     /* product functions */
   }
+
+  const toggleDropdown = (stopIndex: number) => {
+    setOpenDropdowns((prev) => ({
+      ...prev,
+      [stopIndex]: !prev[stopIndex],
+    }));
+  };
 
   const handleAddProduct = () => {
     if (newProduct.name) {
@@ -557,23 +568,26 @@ function App() {
                       id={`dropdown-stop-${stopIndex}`}
                       className="secondary-btn"
                       style={{ border: "none" }}
+                      onClick={() => toggleDropdown(stopIndex)}
                     >
                       Stop {stopIndex + 1}
                     </Dropdown.Toggle>
-                    <Dropdown.Menu>
-                      <Dropdown.ItemText>
-                        <strong>Location:</strong> {stop.location.name}
-                      </Dropdown.ItemText>
-                      <Dropdown.Divider />
-                      <Dropdown.ItemText>
-                        <strong>Products:</strong>
-                      </Dropdown.ItemText>
-                      {stop.items.map((item, itemIndex) => (
-                        <Dropdown.ItemText key={itemIndex}>
-                          {item.productName} x {item.quantity}
+                    {openDropdowns[stopIndex] && (
+                      <Dropdown.Menu>
+                        <Dropdown.ItemText>
+                          <strong>Location:</strong> {stop.location.name}
                         </Dropdown.ItemText>
-                      ))}
-                    </Dropdown.Menu>
+                        <Dropdown.Divider />
+                        <Dropdown.ItemText>
+                          <strong>Products:</strong>
+                        </Dropdown.ItemText>
+                        {stop.items.map((item, itemIndex) => (
+                          <Dropdown.ItemText key={itemIndex}>
+                            {item.productName} x {item.quantity}
+                          </Dropdown.ItemText>
+                        ))}
+                      </Dropdown.Menu>
+                    )}
                   </Dropdown>
                 </div>
               ))}
