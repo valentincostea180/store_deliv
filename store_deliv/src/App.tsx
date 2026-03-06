@@ -64,6 +64,8 @@ function App() {
   const [showLocationModal, setShowLocationModal] = useState(false);
   const [showJourneyModal, setShowJourneyModal] = useState(false);
 
+  const [journeyBool, setJourneyBool] = useState(false);
+
   const [showStopButton, setShowStopButton] = useState(false);
 
   const [showProductTable, setShowProductTable] = useState(false);
@@ -428,6 +430,7 @@ function App() {
       quantity: "",
     });
     setShowJourneyModal(true);
+    setJourneyBool(true);
   };
 
   const addLocationToStop = (location: Location) => {
@@ -542,14 +545,38 @@ function App() {
                 className="form-input"
               />
             </div>
-            <button
-              onClick={() => setShowJourneyName(false)}
-              className="secondary-btn"
-              style={{ marginTop: "0.5rem" }}
-              disabled={!currentJourney.name}
+            <div
+              style={{
+                minWidth: "500px",
+                display: "flex",
+                flexDirection: "row",
+                alignItems: "center",
+                justifyContent: "space-between",
+              }}
             >
-              Save
-            </button>
+              <button
+                onClick={() => setShowJourneyName(false)}
+                className="secondary-btn"
+                style={{ marginTop: "0.5rem" }}
+                disabled={!currentJourney.name}
+              >
+                Save
+              </button>
+              {journeyBool && (
+                <button
+                  onClick={() => {
+                    setShowJourneyName(false);
+                    setShowLocationModal(false);
+                    setShowNewLocation(false);
+                    setShowJourneyModal(true);
+                  }}
+                  className="secondary-btn"
+                  style={{ marginTop: "0.5rem" }}
+                >
+                  Cancel
+                </button>
+              )}
+            </div>
           </div>
         )}
 
@@ -855,8 +882,8 @@ function App() {
           ) : (
             !showLocationModal &&
             !showProductModal && (
-              <div className="journeys-list">
-                <h2>Saved Journeys</h2>
+              <div className="journey-builder">
+                <h1>Saved Journeys</h1>
                 {journeys.map((journey) => (
                   <div key={journey.id} className="journey-card">
                     <h3>{journey.name}</h3>
