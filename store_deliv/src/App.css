@@ -54,7 +54,6 @@ body {
 .content-panel {
   display: flex;
   flex-direction: column;
-  min-height: 300px;
   padding: 30px;
   background-color: var(--card-background);
   border-radius: 12px;
@@ -268,6 +267,7 @@ table tr:last-child td:last-child {
   padding: 12px 32px;
   color: white;
   background-color: var(--primary-color);
+  margin-bottom: 1rem;
 }
 
 .add-btn:hover {

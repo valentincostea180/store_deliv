@@ -652,7 +652,7 @@ function App() {
               ) : currentJourney.stops &&
                 !(currentJourney.stops?.length > 0) ? (
                 <button
-                  className="secondary-btn"
+                  className="add-btn"
                   onClick={() => {
                     setShowLocationModal(true);
                     setShowJourneyModal(false);
@@ -662,7 +662,7 @@ function App() {
                 </button>
               ) : (
                 <button
-                  className="secondary-btn"
+                  className="add-btn"
                   onClick={() => {
                     setShowLocationModal(true);
                     setShowJourneyModal(false);
@@ -779,7 +779,7 @@ function App() {
                         </tbody>
                       </table>
                       <button
-                        className="secondary-btn"
+                        className="add-btn"
                         onClick={() => {
                           setShowProductModal(true);
                           setShowJourneyModal(false);
@@ -800,7 +800,7 @@ function App() {
                       {" "}
                       <h2 style={{ margin: "0" }}>Current Product</h2>
                       <button
-                        className="secondary-btn"
+                        className="add-btn"
                         onClick={() => {
                           setShowProductModal(true);
                           setShowJourneyModal(false);
