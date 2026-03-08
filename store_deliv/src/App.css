@@ -258,7 +258,7 @@ table tr:last-child td:last-child {
 }
 
 .secondary-btn:disabled {
-  background-color: #eeeeee46;
+  background-color: var(--text-light);
   cursor: not-allowed;
   transform: none;
 }
@@ -294,7 +294,7 @@ table tr:last-child td:last-child {
   padding: 20px;
   font-style: italic;
   text-align: center;
-  color: #5b5b5b;
+  color: var(--text-light);
 }
 
 /* Error Message */
