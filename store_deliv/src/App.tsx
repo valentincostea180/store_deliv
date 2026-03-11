@@ -600,7 +600,12 @@ function App() {
                       Stop {stopIndex + 1}
                     </Dropdown.Toggle>
                     {openDropdowns[stopIndex] && (
-                      <Dropdown.Menu>
+                      <div
+                        className="dropdown-stops"
+                        style={{
+                          margin: "0.5rem 3rem 0.5rem 3rem",
+                        }}
+                      >
                         <Dropdown.ItemText>
                           <strong>Location:</strong> {stop.location.name}
                         </Dropdown.ItemText>
@@ -613,7 +618,7 @@ function App() {
                             {item.productName} x {item.quantity}
                           </Dropdown.ItemText>
                         ))}
-                      </Dropdown.Menu>
+                      </div>
                     )}
                   </Dropdown>
                 </div>
