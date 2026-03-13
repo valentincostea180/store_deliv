@@ -876,7 +876,7 @@ function App() {
           !showLocationModal &&
           !showProductModal &&
           journeys.length === 0 ? (
-            <div className="empty-state">
+            <div className="empty-state" style={{ marginBottom: "2rem" }}>
               <h2>There are no journeys saved.</h2>
               <button className="secondary-btn" onClick={startNewJourney}>
                 Create New Journey
