@@ -67,6 +67,7 @@ function App() {
   const [journeyBool, setJourneyBool] = useState(false);
 
   const [showStopButton, setShowStopButton] = useState(false);
+  const [showQuantityButton, setShowQuantityButton] = useState(false);
 
   const [showProductTable, setShowProductTable] = useState(false);
 
@@ -834,7 +835,7 @@ function App() {
                 </button>
               )}
             {/* Save Journey Button */}
-            {!showStopButton && (
+            {!showQuantityButton && !showStopButton && (
               <button
                 className="primary-btn"
                 onClick={saveJourney}
