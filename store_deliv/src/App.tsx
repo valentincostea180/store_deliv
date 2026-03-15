@@ -906,7 +906,7 @@ function App() {
 
           {/* Locations Modal */}
           {showLocationModal && (
-            <div className="content-panel">
+            <div className="content-panel" style={{ minHeight: "255px" }}>
               {!showNewLocation && locations.length === 0 ? (
                 <div className="empty-state">
                   <h2>There are no locations saved.</h2>
@@ -930,13 +930,14 @@ function App() {
                 </div>
               ) : showNewLocation ? (
                 <div className="form-container">
-                  <h2>Add New Location</h2>
-                  <div className="form-row">
+                  <h2 style={{ fontSize: "2rem" }}>Add New Location</h2>
+                  <div className="form-row horizontal">
                     <div className="form-group">
+                      <label className="form-label">Address</label>
                       <div className="input-wrapper">
                         <input
                           type="text"
-                          placeholder="Address"
+                          placeholder="Google Maps URL"
                           value={newLocation.address}
                           onChange={(e) => handleAddressChange(e.target.value)}
                           className="form-input"
@@ -945,10 +946,11 @@ function App() {
                     </div>
 
                     <div className="form-group">
+                      <label className="form-label">Location Name</label>
                       <div className="input-wrapper">
                         <input
                           type="text"
-                          placeholder="Location name"
+                          placeholder="Main Warehouse"
                           value={newLocation.name}
                           onChange={(e) =>
                             setNewLocation({
@@ -959,9 +961,9 @@ function App() {
                           className="form-input"
                         />
                         {extractedCoords && (
-                          <div className="coordinates-display">
+                          <div className="coordinates-display success">
+                            <span className="coords-icon">📍</span>
                             <small>
-                              Coordinates extracted:{" "}
                               {extractedCoords.lat.toFixed(6)},{" "}
                               {extractedCoords.lng.toFixed(6)}
                             </small>
