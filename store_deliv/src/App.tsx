@@ -1068,9 +1068,10 @@ function App() {
                   <div style={{ marginBottom: "2rem" }} className="form-row">
                     <div className="form-group">
                       <div className="input-wrapper">
+                        <label className="form-label">Product Name</label>
                         <input
                           type="text"
-                          placeholder="Product name"
+                          placeholder="e.g. Milk Bottles"
                           value={newProduct.name}
                           onChange={(e) =>
                             setNewProduct({
