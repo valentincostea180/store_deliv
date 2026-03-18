@@ -232,7 +232,7 @@ table tr:last-child td:last-child {
 }
 
 .primary-btn {
-  color: white;
+  color: var(--card-background);
   background-color: var(--primary-color);
 }
 
@@ -265,7 +265,7 @@ table tr:last-child td:last-child {
 
 .add-btn {
   padding: 12px 32px;
-  color: white;
+  color: var(--card-background);
   background-color: var(--primary-color);
   margin-bottom: 1rem;
 }
