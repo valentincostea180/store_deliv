@@ -135,6 +135,13 @@ body {
   box-shadow: 0 0 0 2px rgba(76, 175, 80, 0.1);
 }
 
+/* Form Input States */
+.form-input:focus {
+  outline: none;
+  border-color: var(--primary-color);
+  box-shadow: 0 0 0 2px rgba(76, 175, 80, 0.1);
+}
+
 /* Tables */
 ul {
   list-style-type: none;
@@ -231,6 +238,7 @@ table tr:last-child td:last-child {
   transition: all 0.2s;
 }
 
+/* Primary Button */
 .primary-btn {
   color: var(--card-background);
   background-color: var(--primary-color);
@@ -247,6 +255,7 @@ table tr:last-child td:last-child {
   transform: none;
 }
 
+/* Secondary Button */
 .secondary-btn {
   color: var(--secondary-color);
   background-color: transparent;
@@ -263,6 +272,7 @@ table tr:last-child td:last-child {
   transform: none;
 }
 
+/* Add Button */
 .add-btn {
   padding: 12px 32px;
   color: var(--card-background);
@@ -275,6 +285,7 @@ table tr:last-child td:last-child {
   transform: translateY(-1px);
 }
 
+/* Small Button */
 .small-btn {
   margin: 0.5rem;
   width: 62px;
@@ -302,6 +313,7 @@ table tr:last-child td:last-child {
   text-align: center;
 }
 
+/* Journey Builder Sections */
 .items-section {
   display: flex;
   flex-direction: column;
