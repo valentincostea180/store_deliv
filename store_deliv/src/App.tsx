@@ -824,7 +824,7 @@ function App() {
 
         {!showJourneyName && (
           <div className="action-buttons">
-            {/* Save Current Stop button */}
+            {/* Save Current Stop Button */}
             {showStopButton &&
               showProductTable &&
               currentStop.items &&
