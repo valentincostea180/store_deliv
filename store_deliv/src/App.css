@@ -275,12 +275,13 @@ table tr:last-child td:last-child {
 /* Add Button */
 .add-btn {
   padding: 12px 32px;
-  color: var(--card-background);
-  background-color: var(--primary-color);
+  color: var(--primary-color);
+  background-color: transparent;
   margin-bottom: 1rem;
 }
 
 .add-btn:hover {
+  color: var(--card-background);
   background-color: var(--primary-color);
   transform: translateY(-1px);
 }

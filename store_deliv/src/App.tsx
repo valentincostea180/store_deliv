@@ -3,6 +3,8 @@ import "./App.css";
 import Dropzone from "./components/Dropzone";
 import { extractCoordinatesFromGoogleMapsUrl } from "./gps.tsx";
 import Dropdown from "react-bootstrap/Dropdown";
+import Toast from "react-bootstrap/Toast";
+import ToastContainer from "react-bootstrap/ToastContainer";
 
 interface Product {
   id: string;
@@ -59,6 +61,14 @@ function App() {
       .then((data) => setJourneys(data))
       .catch((error) => console.error("Error loading journeys:", error));
   }, []);
+
+  const [showToast, setShowToast] = useState(false);
+  const [selectedJourney, setSelectedJourney] = useState<Journey | null>(null);
+
+  const handleShowDetails = (journey: Journey) => {
+    setSelectedJourney(journey);
+    setShowToast(true);
+  };
 
   const [showProductModal, setShowProductModal] = useState(false);
   const [showLocationModal, setShowLocationModal] = useState(false);
@@ -891,11 +901,46 @@ function App() {
                 <h1>Saved Journeys</h1>
                 {journeys.map((journey) => (
                   <div key={journey.id} className="journey-card">
-                    <h3>{journey.name}</h3>
-                    <p>Date: {journey.date}</p>
-                    <p>Stops: {journey.stops.length}</p>
+                    <h3 onClick={() => handleShowDetails(journey)}>
+                      {journey.name}
+                    </h3>
                   </div>
                 ))}
+
+                {/* Toast Container */}
+                <ToastContainer position="bottom-end" className="p-3">
+                  <Toast
+                    show={showToast}
+                    onClose={() => setShowToast(false)}
+                    delay={5000}
+                    autohide
+                  >
+                    <Toast.Header>
+                      <strong className="me-auto">Journey Details</strong>
+                    </Toast.Header>
+                    <Toast.Body>
+                      <p>
+                        <strong>Date:</strong> {selectedJourney?.date}
+                      </p>
+                      <p>
+                        <strong>Stops:</strong> {selectedJourney?.stops.length}
+                      </p>
+                      {selectedJourney?.stops.map((stop, index) => (
+                        <div key={index} className="mt-2">
+                          <strong>Stop {index + 1}:</strong>{" "}
+                          {stop.location.name}
+                          <ul className="mt-1">
+                            {stop.items.map((item, itemIndex) => (
+                              <li key={itemIndex}>
+                                {item.productName} x {item.quantity}
+                              </li>
+                            ))}
+                          </ul>
+                        </div>
+                      ))}
+                    </Toast.Body>
+                  </Toast>
+                </ToastContainer>
                 <button className="secondary-btn" onClick={startNewJourney}>
                   Create New Journey
                 </button>
