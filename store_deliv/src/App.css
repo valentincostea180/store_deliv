@@ -263,7 +263,7 @@ table tr:last-child td:last-child {
 }
 
 .secondary-btn:hover {
-  background-color: #cccccc;
+  background-color: #ffafaf6b;
 }
 
 .secondary-btn:disabled {
@@ -330,6 +330,72 @@ table tr:last-child td:last-child {
 
 h1 {
   margin-top: 0%;
+}
+
+/* Toast */
+.toast-container {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  z-index: 1050;
+}
+
+.toast {
+  background-color: white;
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  min-width: 300px;
+  max-width: 400px;
+  animation: slideIn 0.3s ease-out;
+}
+
+.toast-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px 16px;
+  background-color: var(--primary-color);
+  color: white;
+  border-top-left-radius: 8px;
+  border-top-right-radius: 8px;
+}
+
+.toast-header strong {
+  color: white;
+}
+
+.toast-header .btn-close {
+  background: none;
+  border: none;
+  color: white;
+  font-size: 20px;
+  cursor: pointer;
+  padding: 0;
+  width: 24px;
+  height: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.toast-header .btn-close:hover {
+  opacity: 0.8;
+}
+
+.toast-body {
+  padding: 16px;
+  color: var(--text-color);
+}
+
+@keyframes slideIn {
+  from {
+    transform: translateX(100%);
+    opacity: 0;
+  }
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
 }
 
 /* Responsive */
