@@ -907,12 +907,12 @@ function App() {
                   </div>
                 ))}
 
-                {/* Toast Container */}
+                {/* Toast */}
                 <ToastContainer position="bottom-end" className="p-3">
                   <Toast
                     show={showToast}
                     onClose={() => setShowToast(false)}
-                    delay={5000}
+                    delay={1000000}
                     autohide
                   >
                     <Toast.Header>
@@ -923,19 +923,20 @@ function App() {
                         <strong>Date:</strong> {selectedJourney?.date}
                       </p>
                       <p>
-                        <strong>Stops:</strong> {selectedJourney?.stops.length}
+                        <strong>Total stops:</strong>{" "}
+                        {selectedJourney?.stops.length}
                       </p>
                       {selectedJourney?.stops.map((stop, index) => (
                         <div key={index} className="mt-2">
                           <strong>Stop {index + 1}:</strong>{" "}
                           {stop.location.name}
-                          <ul className="mt-1">
+                          <h2>
                             {stop.items.map((item, itemIndex) => (
-                              <li key={itemIndex}>
+                              <div key={itemIndex}>
                                 {item.productName} x {item.quantity}
-                              </li>
+                              </div>
                             ))}
-                          </ul>
+                          </h2>
                         </div>
                       ))}
                     </Toast.Body>

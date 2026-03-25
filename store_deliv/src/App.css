@@ -365,9 +365,9 @@ h1 {
 }
 
 .toast-header .btn-close {
-  background: none;
+  background: var(--card-background);
   border: none;
-  color: white;
+  color: var(--card-background);
   font-size: 20px;
   cursor: pointer;
   padding: 0;
