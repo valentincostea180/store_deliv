@@ -575,10 +575,10 @@ function App() {
               {journeyBool && (
                 <button
                   onClick={() => {
-                    setShowJourneyName(false);
                     setShowLocationModal(false);
                     setShowNewLocation(false);
-                    setShowJourneyModal(true);
+                    setShowJourneyModal(false);
+                    setShowJourneyName(true);
                   }}
                   className="secondary-btn"
                   style={{ marginTop: "0.5rem" }}

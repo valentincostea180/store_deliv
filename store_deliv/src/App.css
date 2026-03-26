@@ -267,7 +267,8 @@ table tr:last-child td:last-child {
 }
 
 .secondary-btn:disabled {
-  background-color: var(--hover-color);
+  background-color: var(--secondary-color);
+  color: var(--background-color);
   cursor: not-allowed;
   transform: none;
 }
