@@ -1062,9 +1062,8 @@ function App() {
                       className="primary-btn"
                       onClick={() => {
                         setNewLocation({ address: "", name: "" });
-                        setShowLocationModal(false);
+                        setShowLocationModal(true);
                         setShowNewLocation(false);
-                        setShowJourneyModal(true);
                       }}
                       style={{
                         backgroundColor:
