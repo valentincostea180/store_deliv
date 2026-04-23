@@ -566,9 +566,14 @@ function App() {
             >
               <button
                 onClick={() => setShowJourneyName(false)}
-                className="secondary-btn"
-                style={{ marginTop: "0.5rem" }}
+                className="primary-btn"
                 disabled={!currentJourney.name}
+                style={{
+                  marginTop: "0.5rem",
+                  backgroundColor: !currentJourney.name
+                    ? "#f443369c"
+                    : "#45a049",
+                }}
               >
                 Save
               </button>
@@ -580,8 +585,13 @@ function App() {
                     setShowJourneyModal(false);
                     setShowJourneyName(true);
                   }}
-                  className="secondary-btn"
-                  style={{ marginTop: "0.5rem" }}
+                  className="primary-btn"
+                  style={{
+                    marginTop: "0.5rem",
+                    backgroundColor: currentJourney.name
+                      ? "#f443369c"
+                      : "#45a049",
+                  }}
                 >
                   Cancel
                 </button>
@@ -956,7 +966,7 @@ function App() {
                 <div className="empty-state">
                   <h2>There are no locations saved.</h2>
                   <button
-                    className="secondary-btn"
+                    className="add-btn"
                     onClick={() => {
                       setShowNewLocation(true);
                     }}
@@ -964,7 +974,7 @@ function App() {
                     Add Location
                   </button>
                   <button
-                    className="secondary-btn"
+                    className="add-btn"
                     onClick={() => {
                       setShowLocationModal(false);
                       setShowJourneyModal(true);
@@ -1024,10 +1034,11 @@ function App() {
                     {renderLocationTable(true, addLocationToStop)}
                   </div>
                   <button
-                    className="secondary-btn"
+                    className="add-btn"
                     onClick={() => {
                       setShowNewLocation(true);
                     }}
+                    style={{ margin: "10px" }}
                   >
                     {showNewLocation
                       ? "Cancel"
@@ -1036,12 +1047,13 @@ function App() {
                         : "Add Another Location"}
                   </button>
                   <button
-                    className="secondary-btn"
+                    className="add-btn"
                     onClick={() => {
                       showLocationModal;
                       setShowLocationModal(false);
                       setShowJourneyModal(true);
                     }}
+                    style={{ margin: 0 }}
                   >
                     Back
                   </button>
@@ -1068,7 +1080,7 @@ function App() {
                       style={{
                         backgroundColor:
                           newLocation.name && newLocation.address
-                            ? "#f44336"
+                            ? "#f4433651"
                             : "#45a049",
                       }}
                     >
