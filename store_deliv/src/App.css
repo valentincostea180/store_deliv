@@ -263,7 +263,7 @@ table tr:last-child td:last-child {
 }
 
 .secondary-btn:hover {
-  background-color: #ffafaf6b;
+  background-color: #f44336a8;
 }
 
 .secondary-btn:disabled {
@@ -283,7 +283,7 @@ table tr:last-child td:last-child {
 
 .add-btn:hover {
   color: var(--card-background);
-  background-color: var(--primary-color);
+  background-color: #4caf4fa8;
   transform: translateY(-1px);
 }
 
