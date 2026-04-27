@@ -970,6 +970,7 @@ function App() {
                     onClick={() => {
                       setShowNewLocation(true);
                     }}
+                    style={{ margin: 0 }}
                   >
                     Add Location
                   </button>

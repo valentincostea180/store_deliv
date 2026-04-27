@@ -264,6 +264,8 @@ table tr:last-child td:last-child {
 
 .secondary-btn:hover {
   background-color: #f44336a8;
+  color: var(--background-color);
+  border: 1px solid var(--background-color);
 }
 
 .secondary-btn:disabled {
