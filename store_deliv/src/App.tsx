@@ -743,14 +743,14 @@ function App() {
                         }}
                       >
                         <button
-                          className="primary-btn"
+                          className="add-btn"
                           onClick={addItemToCurrentStop}
                           disabled={!currentItem.quantity}
                         >
                           Add to Stop
                         </button>
                         <button
-                          className="secondary-btn"
+                          className="add-btn"
                           onClick={() => {
                             setCurrentItem({
                               productId: "",
@@ -770,36 +770,41 @@ function App() {
                   currentStop.items &&
                   currentStop.items.length > 0 && (
                     <>
-                      <table className="items-table">
-                        <thead>
-                          <tr>
-                            <th>SKU</th>
-                            <th>Quantity</th>
-                          </tr>
-                        </thead>
-                        <tbody>
-                          {currentStop.items.map((item, index) => (
-                            <tr key={index}>
-                              <td
-                                onClick={() => {
-                                  const newItems = [
-                                    ...(currentStop.items || []),
-                                  ];
-                                  newItems.splice(index, 1);
-                                  setCurrentStop({
-                                    ...currentStop,
-                                    items: newItems,
-                                  });
-                                }}
-                                title={"Click to change product."}
-                              >
-                                {item.productName}
-                              </td>
-                              <td>{item.quantity}</td>
+                      <div
+                        className="table-container"
+                        style={{ maxHeight: "7rem" }}
+                      >
+                        <table className="items-table">
+                          <thead>
+                            <tr>
+                              <th>SKU</th>
+                              <th>Quantity</th>
                             </tr>
-                          ))}
-                        </tbody>
-                      </table>
+                          </thead>
+                          <tbody>
+                            {currentStop.items.map((item, index) => (
+                              <tr key={index}>
+                                <td
+                                  onClick={() => {
+                                    const newItems = [
+                                      ...(currentStop.items || []),
+                                    ];
+                                    newItems.splice(index, 1);
+                                    setCurrentStop({
+                                      ...currentStop,
+                                      items: newItems,
+                                    });
+                                  }}
+                                  title={"Click to change product."}
+                                >
+                                  {item.productName}
+                                </td>
+                                <td>{item.quantity}</td>
+                              </tr>
+                            ))}
+                          </tbody>
+                        </table>
+                      </div>
                       <button
                         className="add-btn"
                         onClick={() => {
@@ -1097,7 +1102,7 @@ function App() {
                 <div className="empty-state">
                   <h2>There are no deliverables saved.</h2>
                   <button
-                    className="secondary-btn"
+                    className="add-btn"
                     onClick={() => {
                       setShowNewProduct(true);
                     }}
@@ -1179,7 +1184,7 @@ function App() {
                     })}
                   </div>
                   <button
-                    className="secondary-btn"
+                    className="add-btn"
                     onClick={() => {
                       if (showNewProduct) {
                         setNewProduct({
@@ -1196,12 +1201,13 @@ function App() {
                     Add Product
                   </button>
                   <button
-                    className="secondary-btn"
+                    className="add-btn"
                     onClick={() => {
                       setShowProductModal(false);
                       setShowJourneyModal(true);
                       setShowProductTable(true);
                     }}
+                    style={{ marginBottom: "0" }}
                   >
                     Back
                   </button>
