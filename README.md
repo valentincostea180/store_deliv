@@ -20,8 +20,8 @@ Work in progress. The app allows users to create and manage delivery journeys by
 * Use the interface to manage products, locations, and journeys
 
 ### 🧠 Concepts Used
-React hooks (useState, useEffect)
-Component-based architecture
-API integration (CRUD operations)
-State management for complex UI flows
-Dynamic rendering and conditional UI
+* React hooks (useState, useEffect)
+* Component-based architecture
+* API integration (CRUD operations)
+* State management for complex UI flows
+* Dynamic rendering and conditional UI
