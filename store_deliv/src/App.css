@@ -225,6 +225,14 @@ table tr:last-child td:last-child {
   transition: all 0.2s;
 }
 
+.delete-btn {
+  background-color: transparent;
+  box-shadow: none;
+  border: none;
+  color: black;
+  font-size: 10px;
+}
+
 .primary-btn,
 .secondary-btn,
 .add-btn {

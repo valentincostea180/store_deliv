@@ -659,12 +659,13 @@ function App() {
             <div className="location-selection">
               {currentStop.location ? (
                 <div className="selected-item">
-                  <h2 style={{ margin: "0" }}>Location</h2>{" "}
+                  <h2 style={{ margin: "0 0 15px 0" }}>Location</h2>{" "}
                   <div
                     onClick={() => {
                       (setCurrentStop({
                         ...currentStop,
                         location: undefined,
+                        items: undefined,
                       }),
                         setShowLocationModal(true));
                       setShowJourneyModal(false);
@@ -772,33 +773,29 @@ function App() {
                       <table className="items-table">
                         <thead>
                           <tr>
-                            <th>Product</th>
+                            <th>SKU</th>
                             <th>Quantity</th>
-                            <th>Action</th>
                           </tr>
                         </thead>
                         <tbody>
                           {currentStop.items.map((item, index) => (
                             <tr key={index}>
-                              <td>{item.productName}</td>
-                              <td>{item.quantity}</td>
-                              <td>
-                                <button
-                                  onClick={() => {
-                                    const newItems = [
-                                      ...(currentStop.items || []),
-                                    ];
-                                    newItems.splice(index, 1);
-                                    setCurrentStop({
-                                      ...currentStop,
-                                      items: newItems,
-                                    });
-                                  }}
-                                  className="delete-btn"
-                                >
-                                  Remove
-                                </button>
+                              <td
+                                onClick={() => {
+                                  const newItems = [
+                                    ...(currentStop.items || []),
+                                  ];
+                                  newItems.splice(index, 1);
+                                  setCurrentStop({
+                                    ...currentStop,
+                                    items: newItems,
+                                  });
+                                }}
+                                title={"Click to change product."}
+                              >
+                                {item.productName}
                               </td>
+                              <td>{item.quantity}</td>
                             </tr>
                           ))}
                         </tbody>
