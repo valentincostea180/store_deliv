@@ -170,7 +170,7 @@ function App() {
 
   const handleRemoveProduct = (id: string, photo: string | null) => {
     const confirmDelete = window.confirm(
-      "Are you sure you want to delete this prducts?",
+      "Are you sure you want to delete this product?",
     );
     if (!confirmDelete) return;
 
@@ -316,7 +316,7 @@ function App() {
 
   const handleRemoveLocation = (id: string) => {
     const confirmDelete = window.confirm(
-      "Are you sure you want to delete this prducts?",
+      "Are you sure you want to delete this location?",
     );
     if (!confirmDelete) return;
 
@@ -927,8 +927,17 @@ function App() {
                     delay={1000000}
                     autohide
                   >
-                    <Toast.Header>
+                    <Toast.Header closeButton={false}>
                       <strong className="me-auto">Journey Details</strong>
+
+                      <img
+                        src="/white.png"
+                        alt="Close"
+                        width={20}
+                        height={20}
+                        style={{ cursor: "pointer" }}
+                        onClick={() => setShowToast(false)}
+                      />
                     </Toast.Header>
                     <Toast.Body>
                       <p>
@@ -951,6 +960,15 @@ function App() {
                           </h2>
                         </div>
                       ))}
+                      <button
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          /* handleRemoveJourney(journey.id); */
+                        }}
+                        className="delete-btn"
+                      >
+                        Delete
+                      </button>
                     </Toast.Body>
                   </Toast>
                 </ToastContainer>
