@@ -127,6 +127,32 @@ function App() {
   });
 
   {
+    /* journey functions */
+  }
+
+  const handleRemoveJourney = (id: string) => {
+    const confirmDelete = window.confirm(
+      "Are you sure you want to delete this journey?",
+    );
+    if (!confirmDelete) return;
+
+    try {
+      fetch(`http://localhost:5000/api/journeys/${id}`, {
+        method: "DELETE",
+      }).then((response) => {
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
+        }
+
+        setJourneys((prev) => prev.filter((journey) => journey.id !== id));
+      });
+    } catch (err) {
+      console.error(err);
+      alert("Eroare la eliminarea drumului de pe server.");
+    }
+  };
+
+  {
     /* product functions */
   }
 
@@ -963,7 +989,7 @@ function App() {
                       <button
                         onClick={(e) => {
                           e.stopPropagation();
-                          /* handleRemoveJourney(journey.id); */
+                          handleRemoveJourney(selectedJourney.id);
                         }}
                         className="delete-btn"
                       >
