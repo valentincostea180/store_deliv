@@ -246,14 +246,14 @@ app.delete("/api/journeys/:id", (req, res) => {
     const filteredJourneys = journeys.filter(journeys => journeys.id !== req.params.id);
     
     if (filteredJourneys.length === journeys.length) {
-      return res.status(404).json({ error: "Location not found." });
+      return res.status(404).json({ error: "Journey not found." });
     }
     
     writeJSON(journeysPath, filteredJourneys);
     res.json({ message: "Location deleted successfully." });
   } catch (err) {
     console.error("Error deleting Location:", err);
-    res.status(500).json({ error: "Failed to delete Location." });
+    res.status(500).json({ error: "Failed to delete Journey." });
   }
 });
 
