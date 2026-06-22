@@ -887,6 +887,7 @@ function App() {
                 className="primary-btn"
                 onClick={saveJourney}
                 disabled={
+                  currentStop.items ||
                   !currentJourney.name ||
                   (currentJourney.stops?.length || 0) === 0
                 }
