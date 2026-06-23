@@ -424,3 +424,158 @@ h1 {
     padding: 20px;
   }
 }
+
+/* Landing Page Styles */
+.landing-container {
+  display: flex;
+  min-height: 95vh;
+  min-width: 100vh;
+}
+
+.landing-image-section {
+  flex: 1;
+  background: linear-gradient(
+    135deg,
+    var(--border-color) 0%,
+    var(--background-color) 100%
+  );
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem;
+  color: rgb(0, 0, 0);
+}
+
+.landing-content {
+  max-width: 400px;
+  text-align: center;
+}
+
+.landing-content h1 {
+  font-size: 3rem;
+  margin-bottom: 1rem;
+  font-weight: 700;
+}
+
+.landing-content p {
+  font-size: 1.2rem;
+  margin-bottom: 2rem;
+  opacity: 0.9;
+}
+
+.landing-stat {
+  font-size: 1rem;
+  letter-spacing: 2px;
+  opacity: 0.8;
+}
+
+.login-section {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: white;
+  padding: 2rem;
+}
+
+.login-card {
+  max-width: 400px;
+  width: 100%;
+  padding: 2rem;
+}
+
+.login-card h2 {
+  font-size: 2rem;
+  color: #333;
+  margin-bottom: 0.5rem;
+  font-weight: 600;
+}
+
+.login-subtitle {
+  color: #665;
+  margin-bottom: 2rem;
+  font-size: 0.9rem;
+  letter-spacing: 1px;
+}
+
+.login-input {
+  width: 100%;
+  padding: 0.8rem;
+  border: none;
+  border-bottom: 2px solid var(--border-color);
+  font-size: 1rem;
+  transition: border-color 0.3s;
+  margin-bottom: 1.5rem;
+  background: transparent;
+}
+
+.login-input:focus {
+  outline: none;
+  border-bottom-color: var(--text-light);
+}
+
+.login-btn {
+  width: 100%;
+  padding: 0.8rem;
+  background: var(--text-light);
+  color: white;
+  border: none;
+  border-radius: 5px;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.3s;
+  margin-top: 1rem;
+}
+
+.login-btn:hover {
+  background: var(--background-color);
+  color: #333;
+}
+
+.login-error {
+  color: var(--secondary-color);
+  font-size: 0.9rem;
+  margin: -0.5rem 0 1rem 0;
+}
+
+.signup-link {
+  text-align: center;
+  margin-top: 2rem;
+  color: #665;
+}
+
+.signup-link a {
+  color: var(--text-light);
+  text-decoration: none;
+  font-weight: 600;
+}
+
+.signup-link a:hover {
+  text-decoration: underline;
+}
+
+.logout-btn {
+  background: #e53e3e;
+  color: white;
+  border: none;
+  padding: 0.5rem 1rem;
+  border-radius: 5px;
+  cursor: pointer;
+  margin-left: auto;
+}
+
+/* Mobile Responsive */
+@media (max-width: 768px) {
+  .landing-container {
+    flex-direction: column;
+  }
+
+  .landing-image-section {
+    min-height: 200px;
+  }
+
+  .login-section {
+    padding: 1rem;
+  }
+}
