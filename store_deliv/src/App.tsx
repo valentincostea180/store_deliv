@@ -328,7 +328,7 @@ function App() {
               <div className="form-group">
                 <input
                   type="email"
-                  placeholder="elka@qq.com"
+                  placeholder="EMAIL"
                   value={loginEmail}
                   onChange={(e) => setLoginEmail(e.target.value)}
                   className="login-input"
@@ -969,7 +969,7 @@ function App() {
                 className="primary-btn"
                 onClick={saveJourney}
                 disabled={
-                  currentStop.items ||
+                  !showProductTable ||
                   !currentJourney.name ||
                   (currentJourney.stops?.length || 0) === 0
                 }
@@ -995,11 +995,11 @@ function App() {
   };
 
   return (
-    <div className="app-container">
+    <>
       {!isAuthenticated ? (
         renderLandingPage()
       ) : (
-        <>
+        <div className="app-container">
           <div className="app-header">
             <h1>Company Deliverables System</h1>
           </div>
@@ -1385,9 +1385,9 @@ function App() {
               )}
             </div>
           </div>
-        </>
+        </div>
       )}
-    </div>
+    </>
   );
 }
 
