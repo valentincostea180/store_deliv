@@ -40,6 +40,11 @@ interface Journey {
   stops: JourneyStop[];
 }
 
+interface User {
+  email: string;
+  password: string;
+}
+
 function App() {
   useEffect(() => {
     fetch(`http://localhost:5000/api/products`)
@@ -60,6 +65,13 @@ function App() {
       .then((response) => response.json())
       .then((data) => setJourneys(data))
       .catch((error) => console.error("Error loading journeys:", error));
+  }, []);
+
+  useEffect(() => {
+    fetch(`http://localhost:5000/api/users`)
+      .then((response) => response.json())
+      .then((data) => setUsers(data))
+      .catch((error) => console.error("Error loading users:", error));
   }, []);
 
   const [showToast, setShowToast] = useState(false);
@@ -88,6 +100,7 @@ function App() {
   const [products, setProducts] = useState<Product[]>([]);
   const [locations, setLocations] = useState<Location[]>([]);
   const [journeys, setJourneys] = useState<Journey[]>([]);
+  const [users, setUsers] = useState<User[]>([]);
 
   const [openDropdowns, setOpenDropdowns] = useState<{
     [key: string]: boolean;
@@ -363,12 +376,19 @@ function App() {
     );
   };
 
-  // mock up
   const handleLogin = (e: React.FormEvent) => {
     e.preventDefault();
-    // always succeeds
-    setIsAuthenticated(true);
-    setShowLoginError(false);
+    const foundUser = users.find(
+      (user) => user.email === loginEmail && user.password === loginPassword,
+    );
+
+    if (foundUser) {
+      setIsAuthenticated(true);
+      setShowLoginError(false);
+    } else {
+      setShowLoginError(true);
+      setLoginPassword("");
+    }
 
     if (!loginEmail || !loginPassword) {
       setShowLoginError(true);

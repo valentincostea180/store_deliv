@@ -23,32 +23,34 @@ const storage = multer.diskStorage({
   },
   filename: (req, file, cb) => {
     // unique filename with original extension
-    const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
+    const uniqueSuffix = Date.now() + "-" + Math.round(Math.random() * 1e9);
     const ext = path.extname(file.originalname);
-    cb(null, file.fieldname + '-' + uniqueSuffix + ext);
-  }
+    cb(null, file.fieldname + "-" + uniqueSuffix + ext);
+  },
 });
 
-const upload = multer({ 
+const upload = multer({
   storage: storage,
   fileFilter: (req, file, cb) => {
     // only image files
     const allowedTypes = /jpeg|jpg|png/;
-    const extname = allowedTypes.test(path.extname(file.originalname).toLowerCase());
+    const extname = allowedTypes.test(
+      path.extname(file.originalname).toLowerCase(),
+    );
     const mimetype = allowedTypes.test(file.mimetype);
-    
+
     if (mimetype && extname) {
       return cb(null, true);
     } else {
-      cb(new Error('Only image files are allowed!'));
+      cb(new Error("Only image files are allowed!"));
     }
-  }
+  },
 });
 
 // Middleware
 app.use(cors());
 app.use(express.json());
-app.use(express.static(path.join(__dirname, "public"))); 
+app.use(express.static(path.join(__dirname, "public")));
 app.use("/uploads", express.static(path.join(__dirname, "public", "uploads")));
 
 const dataDir = path.join(__dirname, "public", "data");
@@ -57,15 +59,18 @@ if (!fs.existsSync(dataDir)) {
 }
 
 const productsPath = path.join(dataDir, "products.json");
-const locationsPath = path.join(dataDir, "location.json");
-const journeysPath = path.join(dataDir, "journey.json");
+const locationsPath = path.join(dataDir, "locations.json");
+const journeysPath = path.join(dataDir, "journeys.json");
+const usersPath = path.join(dataDir, "users.json");
 
 if (!fs.existsSync(locationsPath))
   fs.writeFileSync(locationsPath, JSON.stringify([], null, 2));
 if (!fs.existsSync(productsPath))
   fs.writeFileSync(productsPath, JSON.stringify([], null, 2));
 if (!fs.existsSync(journeysPath))
-  fs.writeFileSync(journeysPath, JSON.stringify([], null, 2)); 
+  fs.writeFileSync(journeysPath, JSON.stringify([], null, 2));
+if (!fs.existsSync(usersPath))
+  fs.writeFileSync(usersPath, JSON.stringify([], null, 2));
 
 const readJSON = (filePath) => {
   try {
@@ -85,6 +90,15 @@ const writeJSON = (filePath, data) => {
   }
 };
 
+app.get("/api/users", (req, res) => {
+  try {
+    const users = readJSON(usersPath);
+    res.json(users);
+  } catch (err) {
+    res.status(500).json({ error: "Failed to read the users." });
+  }
+});
+
 app.get("/api/products", (req, res) => {
   try {
     const products = readJSON(productsPath);
@@ -94,13 +108,13 @@ app.get("/api/products", (req, res) => {
   }
 });
 
-app.get("/api/locations", (reg,res) => {
-try {
-  const locations = readJSON(locationsPath);
-  res.json(locations);
-} catch(err) {
-  res.status(500).json({error: "Failed to read the locations."  })
-}
+app.get("/api/locations", (reg, res) => {
+  try {
+    const locations = readJSON(locationsPath);
+    res.json(locations);
+  } catch (err) {
+    res.status(500).json({ error: "Failed to read the locations." });
+  }
 });
 
 app.get("/api/journeys", (req, res) => {
@@ -115,9 +129,9 @@ app.get("/api/journeys", (req, res) => {
 app.post("/api/products", (req, res) => {
   try {
     const products = readJSON(productsPath);
-    const newProd = { 
-      id: Date.now().toString(), 
-      ...req.body
+    const newProd = {
+      id: Date.now().toString(),
+      ...req.body,
     };
     products.push(newProd);
     writeJSON(productsPath, products);
@@ -159,13 +173,13 @@ app.post("/upload", upload.single("file"), (req, res) => {
     if (!req.file) {
       return res.status(400).json({ error: "No file uploaded" });
     }
-    
+
     const fileUrl = `/uploads/${req.file.filename}`;
-    
-    res.json({ 
-      success: true, 
+
+    res.json({
+      success: true,
       url: fileUrl,
-      filename: req.file.filename
+      filename: req.file.filename,
     });
   } catch (err) {
     console.error("Upload error:", err);
@@ -176,28 +190,28 @@ app.post("/upload", upload.single("file"), (req, res) => {
 app.delete("/api/uploads/:filename", (req, res) => {
   try {
     const filename = req.params.filename;
-    
-    if (filename.includes('..') || filename.includes('/')) {
+
+    if (filename.includes("..") || filename.includes("/")) {
       return res.status(400).json({ error: "Invalid filename" });
     }
-    
+
     const filePath = path.join(__dirname, "public", "uploads", filename);
-    
+
     if (!fs.existsSync(filePath)) {
       return res.status(404).json({ error: "File not found" });
     }
-    
+
     fs.unlink(filePath, (err) => {
       if (err) {
         console.error("Error deleting file:", err);
         return res.status(500).json({ error: "Failed to delete file" });
       }
-      
+
       console.log(`Deleted file: ${filename}`);
-      res.json({ 
-        success: true, 
+      res.json({
+        success: true,
         message: `File ${filename} deleted successfully`,
-        filename: filename
+        filename: filename,
       });
     });
   } catch (err) {
@@ -209,12 +223,14 @@ app.delete("/api/uploads/:filename", (req, res) => {
 app.delete("/api/products/:id", (req, res) => {
   try {
     const products = readJSON(productsPath);
-    const filteredProducts = products.filter(product => product.id !== req.params.id);
-    
+    const filteredProducts = products.filter(
+      (product) => product.id !== req.params.id,
+    );
+
     if (filteredProducts.length === products.length) {
       return res.status(404).json({ error: "Product not found." });
     }
-    
+
     writeJSON(productsPath, filteredProducts);
     res.json({ message: "Product deleted successfully." });
   } catch (err) {
@@ -226,12 +242,14 @@ app.delete("/api/products/:id", (req, res) => {
 app.delete("/api/locations/:id", (req, res) => {
   try {
     const locations = readJSON(locationsPath);
-    const filteredLocations = locations.filter(locations => locations.id !== req.params.id);
-    
+    const filteredLocations = locations.filter(
+      (locations) => locations.id !== req.params.id,
+    );
+
     if (filteredLocations.length === locations.length) {
       return res.status(404).json({ error: "Location not found." });
     }
-    
+
     writeJSON(locationsPath, filteredLocations);
     res.json({ message: "Location deleted successfully." });
   } catch (err) {
@@ -243,12 +261,14 @@ app.delete("/api/locations/:id", (req, res) => {
 app.delete("/api/journeys/:id", (req, res) => {
   try {
     const journeys = readJSON(journeysPath);
-    const filteredJourneys = journeys.filter(journeys => journeys.id !== req.params.id);
-    
+    const filteredJourneys = journeys.filter(
+      (journeys) => journeys.id !== req.params.id,
+    );
+
     if (filteredJourneys.length === journeys.length) {
       return res.status(404).json({ error: "Journey not found." });
     }
-    
+
     writeJSON(journeysPath, filteredJourneys);
     res.json({ message: "Location deleted successfully." });
   } catch (err) {
@@ -260,4 +280,3 @@ app.delete("/api/journeys/:id", (req, res) => {
 app.listen(PORT, () => {
   console.log(`Server is running on http://localhost:${PORT}`);
 });
-
