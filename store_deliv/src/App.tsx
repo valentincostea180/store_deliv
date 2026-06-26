@@ -41,6 +41,8 @@ interface Journey {
 }
 
 interface User {
+  id: string;
+  name: string;
   email: string;
   password: string;
 }
@@ -142,6 +144,7 @@ function App() {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [loginEmail, setLoginEmail] = useState("");
   const [loginPassword, setLoginPassword] = useState("");
+  const [userName, setUserName] = useState("");
   const [showLoginError, setShowLoginError] = useState(false);
 
   {
@@ -385,6 +388,7 @@ function App() {
     if (foundUser) {
       setIsAuthenticated(true);
       setShowLoginError(false);
+      setUserName(foundUser.name);
     } else {
       setShowLoginError(true);
       setLoginPassword("");
@@ -394,7 +398,6 @@ function App() {
       setShowLoginError(true);
       return;
     }
-    // backend
   };
 
   {
@@ -1032,7 +1035,7 @@ function App() {
               !showProductModal &&
               journeys.length === 0 ? (
                 <div className="empty-state" style={{ marginBottom: "2rem" }}>
-                  <h2>There are no journeys saved.</h2>
+                  <h2>Hi, {userName}! There are no journeys saved.</h2>
                   <button className="secondary-btn" onClick={startNewJourney}>
                     Create New Journey
                   </button>
