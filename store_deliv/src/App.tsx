@@ -373,7 +373,40 @@ function App() {
             </form>
 
             <p className="signup-link">Don't have account?</p>
+            <button 
+              //add logic
+              className="btn-add"
+              > Sign In
+            </button>
           </div>
+          <ToastContainer position="bottom-end" className="p-3">
+                      <Toast
+                        show={showToast}
+                        onClose={() => setShowToast(false)}
+                        delay={1000000}
+                        autohide
+                      >
+                        <Toast.Header closeButton={false}>
+                          <strong className="me-auto">Sign In</strong>
+                          <img
+                            src="/white.png"
+                            alt="Close"
+                            width={20}
+                            height={20}
+                            style={{ cursor: "pointer" }}
+                            onClick={() => setShowToast(false)}
+                          />
+                        </Toast.Header>
+                        <Toast.Body>
+                          <button
+                            className="delete-btn"
+                            // add logic
+                          >
+                            Cancel
+                          </button>
+                        </Toast.Body>
+                      </Toast>
+                    </ToastContainer>
         </div>
       </div>
     );
