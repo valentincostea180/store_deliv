@@ -79,11 +79,6 @@ function App() {
   const [showToast, setShowToast] = useState(false);
   const [selectedJourney, setSelectedJourney] = useState<Journey | null>(null);
 
-  const handleShowDetails = (journey: Journey) => {
-    setSelectedJourney(journey);
-    setShowToast(true);
-  };
-
   const [showProductModal, setShowProductModal] = useState(false);
   const [showLocationModal, setShowLocationModal] = useState(false);
   const [showJourneyModal, setShowJourneyModal] = useState(false);
@@ -144,6 +139,11 @@ function App() {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [loginEmail, setLoginEmail] = useState("");
   const [loginPassword, setLoginPassword] = useState("");
+
+  const [saveName, setSaveName] = useState("");
+  const [saveEmail, setSaveEmail] = useState("");
+  const [savePassword, setsetSavePassword] = useState("");
+
   const [userName, setUserName] = useState("");
   const [showLoginError, setShowLoginError] = useState(false);
 
@@ -373,40 +373,73 @@ function App() {
             </form>
 
             <p className="signup-link">Don't have account?</p>
-            <button 
-              //add logic
-              className="btn-add"
-              > Sign In
-            </button>
+            <p onClick={() => setShowToast(true)} className="signup-link">
+              {" "}
+              Sign In
+            </p>
           </div>
           <ToastContainer position="bottom-end" className="p-3">
-                      <Toast
-                        show={showToast}
-                        onClose={() => setShowToast(false)}
-                        delay={1000000}
-                        autohide
-                      >
-                        <Toast.Header closeButton={false}>
-                          <strong className="me-auto">Sign In</strong>
-                          <img
-                            src="/white.png"
-                            alt="Close"
-                            width={20}
-                            height={20}
-                            style={{ cursor: "pointer" }}
-                            onClick={() => setShowToast(false)}
-                          />
-                        </Toast.Header>
-                        <Toast.Body>
-                          <button
-                            className="delete-btn"
-                            // add logic
-                          >
-                            Cancel
-                          </button>
-                        </Toast.Body>
-                      </Toast>
-                    </ToastContainer>
+            <Toast
+              show={showToast}
+              onClose={() => setShowToast(false)}
+              delay={1000000}
+              autohide
+            >
+              <Toast.Header closeButton={false}>
+                <strong className="me-auto">Sign In</strong>
+                <img
+                  src="/white.png"
+                  alt="Close"
+                  width={20}
+                  height={20}
+                  style={{ cursor: "pointer" }}
+                  onClick={() => setShowToast(false)}
+                />
+              </Toast.Header>
+              <Toast.Body>
+                <form onSubmit={handleSave}>
+                  <div className="form-group">
+                    <input
+                      type="email"
+                      placeholder="NAME"
+                      value={saveName}
+                      onChange={(e) => setLoginEmail(e.target.value)}
+                      className="save-input"
+                      required
+                    />
+                  </div>
+
+                  <div className="form-group">
+                    <input
+                      type="email"
+                      placeholder="EMAIL"
+                      value={saveEmail}
+                      onChange={(e) => setLoginEmail(e.target.value)}
+                      className="save-input"
+                      required
+                    />
+                  </div>
+
+                  <div className="form-group">
+                    <input
+                      type="password"
+                      placeholder="PASSWORD"
+                      value={savePassword}
+                      onChange={(e) => setLoginPassword(e.target.value)}
+                      className="save-input"
+                      required
+                    />
+                  </div>
+                </form>
+                <button
+                  className="delete-btn"
+                  onClick={() => setShowToast(false)}
+                >
+                  Cancel
+                </button>
+              </Toast.Body>
+            </Toast>
+          </ToastContainer>
         </div>
       </div>
     );
@@ -430,6 +463,14 @@ function App() {
     if (!loginEmail || !loginPassword) {
       setShowLoginError(true);
       return;
+    }
+  };
+
+  const handleSave = (e: React.FormEvent) => {
+    e.preventDefault();
+
+    if (saveName && saveEmail && savePassword) {
+    } else {
     }
   };
 
@@ -1082,7 +1123,12 @@ function App() {
                     <h1>Saved Journeys</h1>
                     {journeys.map((journey) => (
                       <div key={journey.id} className="journey-card">
-                        <h3 onClick={() => handleShowDetails(journey)}>
+                        <h3
+                          onClick={() => {
+                            setSelectedJourney(journey);
+                            setShowToast(true);
+                          }}
+                        >
                           {journey.name}
                         </h3>
                       </div>
