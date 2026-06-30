@@ -142,7 +142,7 @@ function App() {
 
   const [saveName, setSaveName] = useState("");
   const [saveEmail, setSaveEmail] = useState("");
-  const [savePassword, setsetSavePassword] = useState("");
+  const [savePassword, setSavePassword] = useState("");
 
   const [userName, setUserName] = useState("");
   const [showLoginError, setShowLoginError] = useState(false);
@@ -397,13 +397,13 @@ function App() {
                 />
               </Toast.Header>
               <Toast.Body>
-                <form onSubmit={handleSave}>
+                <form onSubmit={handleSave(saveName, saveEmail, savePassword)}>
                   <div className="form-group">
                     <input
                       type="email"
                       placeholder="NAME"
                       value={saveName}
-                      onChange={(e) => setLoginEmail(e.target.value)}
+                      onChange={(e) => setSaveName(e.target.value)}
                       className="save-input"
                       required
                     />
@@ -414,7 +414,7 @@ function App() {
                       type="email"
                       placeholder="EMAIL"
                       value={saveEmail}
-                      onChange={(e) => setLoginEmail(e.target.value)}
+                      onChange={(e) => setSaveEmail(e.target.value)}
                       className="save-input"
                       required
                     />
@@ -425,7 +425,7 @@ function App() {
                       type="password"
                       placeholder="PASSWORD"
                       value={savePassword}
-                      onChange={(e) => setLoginPassword(e.target.value)}
+                      onChange={(e) => setSavePassword(e.target.value)}
                       className="save-input"
                       required
                     />
@@ -433,9 +433,10 @@ function App() {
                 </form>
                 <button
                   className="delete-btn"
-                  onClick={() => setShowToast(false)}
+                  disabled={!saveName || !saveEmail || !savePassword}
+                  onClick={() => handleSave(saveName, saveEmail, savePassword)}
                 >
-                  Cancel
+                  Save
                 </button>
               </Toast.Body>
             </Toast>
@@ -466,12 +467,36 @@ function App() {
     }
   };
 
-  const handleSave = (e: React.FormEvent) => {
-    e.preventDefault();
+  const handleSave = async (
+    saveName: string,
+    saveEmail: string,
+    savePassword: string,
+  ) => {
+    try {
+      const user: User = {
+        id: Date.now().toString(),
+        name: saveName,
+        email: saveEmail,
+        password: savePassword,
+      };
 
-    if (saveName && saveEmail && savePassword) {
-    } else {
-    }
+      fetch(`http://localhost:5000/api/users`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(user),
+      })
+        .then((res) => res.json())
+        .then((savedLocation) => {
+          setLocations((prev) => [savedLocation, ...prev]);
+          setNewLocation({ name: "", address: "" });
+          setShowNewLocation(false);
+          setExtractedCoords(null);
+        })
+        .catch((error) => {
+          console.error("Error saving user:", error);
+          alert("Failed to save user");
+        });
+    } catch (error) {}
   };
 
   {
