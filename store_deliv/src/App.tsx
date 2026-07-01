@@ -486,12 +486,6 @@ function App() {
         body: JSON.stringify(user),
       })
         .then((res) => res.json())
-        .then((savedLocation) => {
-          setLocations((prev) => [savedLocation, ...prev]);
-          setNewLocation({ name: "", address: "" });
-          setShowNewLocation(false);
-          setExtractedCoords(null);
-        })
         .catch((error) => {
           console.error("Error saving user:", error);
           alert("Failed to save user");

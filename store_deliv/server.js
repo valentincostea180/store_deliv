@@ -126,6 +126,19 @@ app.get("/api/journeys", (req, res) => {
   }
 });
 
+app.post("/api/users", (req, res) => {
+  try {
+    const users = readJSON(usersPath);
+    const newUser = { id: Date.now().toString(), ...req.body };
+    users.push(newUser);
+    writeJSON(usersPath, users);
+    res.json(newUser);
+  } catch (err) {
+    console.error("Error adding user:", err);
+    res.status(500).json({ error: "Failed to add user" });
+  }
+});
+
 app.post("/api/products", (req, res) => {
   try {
     const products = readJSON(productsPath);
